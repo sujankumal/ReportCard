@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Login</title>
+{% endblock %}
+
+{% block body %}
+<div class="container jumbotron">
+    <form method="POST" action="{% url 'StudentExamReport:verify_user' %}">
+        {% csrf_token %}
+        <label>Username</label>
+        <input type="text" name="username" class="form-control">
+        <label>Password</label>
+        <input type="password" name="password" class="form-control">
+        <input type="submit" value="LOGIN" class="btn btn-dark">
+    </form>
+</div>
+{% endblock %}

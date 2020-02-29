@@ -1,5 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faKey} from '@fortawesome/free-solid-svg-icons';
+
 
 class SignupForm extends React.Component {
   state = {
@@ -18,25 +21,55 @@ class SignupForm extends React.Component {
   };
 
   render() {
-    return (
+    return (<div className="container mt-1">
+    <div className="d-flex justify-content-center h-100">
+      <div className="card">
+        <div className="card-header">
+          <h3 >Sign Up</h3>
+          
+        </div>
+        <div className="card-body">
       <form onSubmit={e => this.props.handle_signup(e, this.state)}>
-        <h4>Sign Up</h4>
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          name="username"
-          value={this.state.username}
-          onChange={this.handle_change}
-        />
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          name="password"
-          value={this.state.password}
-          onChange={this.handle_change}
-        />
-        <input type="submit" />
-      </form>
+        <div className="input-group form-group">
+              <div className="input-group-prepend">
+                <span className="input-group-text"><FontAwesomeIcon icon={ faUser} /></span>
+              </div>
+              <input
+                type="text"
+                name="username"
+                value={this.state.username}
+                onChange={this.handle_change}
+                className="form-control input_user"
+                placeholder="Username"
+              />
+         </div>
+            <div className="input-group form-group">
+              <div className="input-group-prepend">
+                <span className="input-group-text"><FontAwesomeIcon icon={faKey} /></span>
+              </div>
+              <input
+                type="password"
+                name="password"
+                value={this.state.password}
+                onChange={this.handle_change}
+                className="form-control input_pass"
+                placeholder="Password"
+              />
+              </div>
+              <div className="form-group">
+              <input type="submit" value="Sign Up" className="btn float-right btn-outline-light"/>
+            </div>
+         </form>
+         </div>
+        <div className="card-footer">
+          
+          <div className="d-flex justify-content-center">
+            Contact Administrator
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
     );
   }
 }

@@ -60,7 +60,9 @@ margin-bottom: auto;
 width: 400px;
 background-color: #999999 !important;
 }
-
+.navbar-dark{
+  box-shadow: inset 0px 3px 0px #900;
+}
 .input-group-prepend span{
 width: 50px;
 background-color: #282c34;

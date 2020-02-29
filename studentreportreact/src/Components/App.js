@@ -5,6 +5,8 @@ import { Helmet } from 'react-helmet'
 import Nav from './Nav';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
+import Welcome from './Welcome';
+import Home from './Home';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -105,6 +107,14 @@ class App extends Component{
     });
   };
   
+  display_home = ()=>{
+    console.log('home');
+    this.setState(
+      {
+        displayed_form: 'Home'
+      }
+    );
+  };
   render() {
     let form;
     switch (this.state.displayed_form) {
@@ -114,8 +124,10 @@ class App extends Component{
       case 'signup':
         form = <SignupForm handle_signup={this.handle_signup} />;
         break;
+      case 'Home':
+        (this.state.logged_in)? form =<Home/> : form = <Welcome/>
       default:
-        form = null;
+        form = <Welcome />;
     }
     return (
       <div className="App">
@@ -126,13 +138,10 @@ class App extends Component{
           logged_in={this.state.logged_in}
           display_form={this.display_form}
           handle_logout={this.handle_logout}
+          display_home = {this.display_home}
         />
-        {form}
-        <h3>
-          {this.state.logged_in
-            ? `Hello, ${this.state.username}`
-            : ''}
-        </h3>
+        {this.state.logged_in ? <Home/> :form }
+      
       </div>
     );
   }

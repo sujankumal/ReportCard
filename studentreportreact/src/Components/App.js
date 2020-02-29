@@ -67,6 +67,7 @@ class App extends Component{
           displayed_form: '',
           username: json.user.username
         });
+        toast.success("Logged in as"+" "+json.user.username);
       }).catch(function() {
         toast.error("Something went Wrong!");
         console.log("error");

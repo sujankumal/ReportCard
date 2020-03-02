@@ -11,7 +11,7 @@ function Nav(props) {
 
   const logged_in_nav = (
     <ul className="navbar-nav mr-auto">
-      <li  className="nav-item"><a href={null} onClick={props.handle_logout}>logout</a></li>
+      <li  className="nav-item"><a href={null} onClick={props.handle_logout}>Logout</a></li>
     </ul>
   );
   return <nav className="navbar navbar-expand-lg navbar-dark bg-dark">

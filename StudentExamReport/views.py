@@ -32,10 +32,16 @@ class UserList(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
+        user = request.data.get('user')
+        if not user:
+            return Response({'response' : 'error', 'message' : 'No data found'})
+        
         serializer = UserSerializerWithToken(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"response" : "error", "message" : serializer.errors})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         

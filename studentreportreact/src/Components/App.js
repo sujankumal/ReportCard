@@ -63,16 +63,20 @@ class App extends Component{
     })
       .then(res => res.json())
       .then(json => {
+        if(json.non_field_errors){
+          toast.error("Unable to log in with provided credentials.");  
+          return;
+        }
         localStorage.setItem('token', json.token);
         this.setState({
           logged_in: true,
           displayed_form: '',
           username: json.user.username
         });
-        toast.success("Logged in as"+" "+json.user.username);
-      }).catch(function() {
+        toast.success("Logged in as "+json.user.username);
+      }).catch(function(error) {
         toast.error("Something went Wrong!");
-        console.log("error");
+        console.log("error:", typeof(error));
     });
   };
 
@@ -126,6 +130,7 @@ class App extends Component{
         break;
       case 'Home':
         (this.state.logged_in)? form =<Home/> : form = <Welcome/>
+        break;
       default:
         form = <Welcome />;
     }

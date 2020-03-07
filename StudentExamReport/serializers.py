@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
+from .models import Grade
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -34,3 +35,8 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         model = User
         fields = ('token', 'username', 'password')
         
+class GradeSerializer(serializers.ModelSerializer):
+   
+   class Meta:
+        model = Grade
+        fields = '__all__'

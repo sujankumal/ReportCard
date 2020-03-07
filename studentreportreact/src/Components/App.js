@@ -9,40 +9,46 @@ import Welcome from './Welcome';
 import Home from './Home';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import {TITLE, HOST} from './constants';
 toast.configure({
   autoClose: 3000,
   draggable: false,
   //etc you get the idea
 });
-
-const TITLE = 'Exam Report'
-// function App() {
-//   return (
-//     <div className="App">
-//       <Helmet>
-//         <title>{TITLE}</title>
-//       </Helmet>
-//       <header className="App-header">
-      
-//       </header>
-//     </div>
-//   );
-// }
 class App extends Component{
   constructor(props){
     super(props);
-    this.state= {
+    const access_token = fetch(HOST+'/api/token/refresh/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: `{
+          "refresh":"${localStorage.getItem('refresh')}"}`    
+      })
+      .then(res => res.json())
+      .then(json => {
+          if(json.non_field_errors){
+              toast.error("Couldn't Refresh. Something Went Wrong.");  
+              return;
+          }
+          return json.access;
+        })
+      .catch(function(error) {
+        toast.error("Sorry. Something went wrong while refreshing.");
+    });
+    this.state = {
       displayed_form: '',
-      logged_in: localStorage.getItem('token') ? true : false,
-      username: ''
+      logged_in: localStorage.getItem('refresh') ? true : false,
+      username: '',
+      access_token:(access_token)? access_token:'',
     }
   }
   componentDidMount() {
     if (this.state.logged_in) {
-      fetch('http://localhost:8000/current_user/', {
+      fetch(HOST+'/current_user/', {
         headers: {
-          Authorization: `JWT ${localStorage.getItem('token')}`
+          Authorization: `JWT ${localStorage.getItem('refresh')}`
         }
       })
         .then(res => res.json())
@@ -54,7 +60,8 @@ class App extends Component{
 
   handle_login = (e, data) => {
     e.preventDefault();
-    fetch('http://localhost:8000/token-auth/', {
+    // fetch(HOST+'/token-auth/', {
+    fetch(HOST+'/api/token/',{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -67,22 +74,24 @@ class App extends Component{
           toast.error("Unable to log in with provided credentials.");  
           return;
         }
-        localStorage.setItem('token', json.token);
+        localStorage.setItem('refresh', json.refresh);
         this.setState({
           logged_in: true,
           displayed_form: '',
-          username: json.user.username
+          // username: json.user.username,
+          access_token: json.access,
         });
-        toast.success("Logged in as "+json.user.username);
+        console.log(json);
+        // toast.success("Logged in as "+json.user.username);
       }).catch(function(error) {
         toast.error("Something went Wrong!");
-        console.log("error:", typeof(error));
+        console.log("error:", typeof(error), error);
     });
   };
 
   handle_signup = (e, data) => {
     e.preventDefault();
-    fetch('http://localhost:8000/users/', {
+    fetch(HOST + '/users/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -91,17 +100,18 @@ class App extends Component{
     })
       .then(res => res.json())
       .then(json => {
-        localStorage.setItem('token', json.token);
+        localStorage.setItem('refresh', json.refresh);
         this.setState({
           logged_in: true,
           displayed_form: '',
-          username: json.username
+          // username: json.username,
+          access_token: json.access,
         });
       });
   };
   
   handle_logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('refresh');
     this.setState({ logged_in: false, username: '' });
   };
 
@@ -119,6 +129,36 @@ class App extends Component{
       }
     );
   };
+  auth_headers = async () => {
+    // return authorization header with basic auth credentials
+    const access_token = await this.state.access_token;
+    if (access_token) {
+      return { Authorization: `Bearer ${access_token}` };
+    } else {
+        return {};
+    }
+  }
+  refresh_access_token = () =>{
+    return fetch(HOST+'/api/token/refresh/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: `{
+          "refresh":"${localStorage.getItem('refresh')}"}`    
+      })
+      .then(res => res.json())
+      .then(json => {
+          if(json.non_field_errors){
+              toast.error("Couldn't Refresh. Something Went Wrong.");  
+              return;
+          }
+          return json.access;
+        })
+      .catch(function(error) {
+        toast.error("Sorry. Something went wrong while refreshing.");
+    });
+  }
   render() {
     let form;
     switch (this.state.displayed_form) {
@@ -145,7 +185,7 @@ class App extends Component{
           handle_logout={this.handle_logout}
           display_home = {this.display_home}
         />
-        {this.state.logged_in ? <Home/> :form }
+        {this.state.logged_in ? <Home auth_headers = {this.auth_headers} /> :form }
       
       </div>
     );

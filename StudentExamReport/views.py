@@ -11,7 +11,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from StudentExamReport.forms import LoginForm
-from .serializers import UserSerializer, UserSerializerWithToken
+from .serializers import UserSerializer, UserSerializerWithToken, GradeSerializer
+from .models import Grade
 # Create your views here.
 
 @api_view(['GET'])
@@ -94,3 +95,10 @@ def verify_user(request):
             messages.warning(request, "User not found! error")
             return redirect('StudentExamReport:user_login')
 
+
+@api_view(['GET'])
+def teachers_view_grade(request):
+
+    grades = Grade.objects.all()
+    serialized_grades = GradeSerializer(grades, many=True)
+    return Response(serialized_grades.data)

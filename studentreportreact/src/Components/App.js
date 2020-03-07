@@ -45,17 +45,6 @@ class App extends Component{
     }
   }
   componentDidMount() {
-    if (this.state.logged_in) {
-      fetch(HOST+'/current_user/', {
-        headers: {
-          Authorization: `JWT ${localStorage.getItem('refresh')}`
-        }
-      })
-        .then(res => res.json())
-        .then(json => {
-          this.setState({ username: json.username });
-        });
-    }
   }
 
   handle_login = (e, data) => {
@@ -132,7 +121,7 @@ class App extends Component{
   auth_headers = async () => {
     // return authorization header with basic auth credentials
     const access_token = await this.state.access_token;
-    if (access_token) {
+    if (access_token) { 
       return { Authorization: `Bearer ${access_token}` };
     } else {
         return {};
@@ -159,6 +148,18 @@ class App extends Component{
         toast.error("Sorry. Something went wrong while refreshing.");
     });
   }
+  get_username = async() => {
+    const header = await this.auth_headers();
+    await fetch(HOST+'/current_user/', {
+        method: 'GET',
+        headers: header ,     
+        })
+      .then(res => res.json())
+      .then(json => {
+        this.setState({ username: json.username });
+        toast.success('Welcome ' + this.state.username);
+      });
+  }
   render() {
     let form;
     switch (this.state.displayed_form) {
@@ -184,6 +185,8 @@ class App extends Component{
           display_form={this.display_form}
           handle_logout={this.handle_logout}
           display_home = {this.display_home}
+          username = {this.state.username}
+          get_username = {this.get_username}
         />
         {this.state.logged_in ? <Home auth_headers = {this.auth_headers} /> :form }
       

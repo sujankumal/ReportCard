@@ -4,11 +4,14 @@ import {HOST} from './constants';
 class Home extends Component {
     constructor(props){
         super(props);
+        this.state ={
+            grades:[],
+            student:{},
+        }
     }
     
     async get_grades(){
         const header = await this.props.auth_headers();
-        console.log(header);
         await fetch(HOST+'/teachers-view-grade/', {
             method: 'GET',
             headers: header ,     
@@ -22,15 +25,7 @@ class Home extends Component {
                 return res.json();
             })
             .then((data) => {
-                console.log(data)
-                // if(res.status == 401){
-                //     toast.error("Unauthorized");  
-                //     return;
-                // }
-                // if(res.status == 200){
-                //     console.log(res.json);
-                // }
-             
+                this.setState({grades:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
                 console.log("error:", typeof(error), error);
@@ -39,10 +34,26 @@ class Home extends Component {
     componentDidMount(){
         this.get_grades();   
     }
-    
+    grade_selected(event){
+        console.log(event.target.value);
+    }
     render(){
+        const gradeItems =  this.state.grades.map((item)=><li>{item.id}</li>);
         return(
-            <div>Home</div>
+            <div className="container row home">
+                <div className="col-md-2">
+                    <nav className="nav">
+                    <select onChange={(e)=>this.grade_selected(e)}>
+                    {
+                    this.state.grades.map((items, key) => 
+                    <option key={key} value={key}>{items.name}</option>
+                    )}
+                    </select>
+                    
+                    </nav>
+                    
+                </div>
+            </div>
         );
     }
 }

@@ -49,7 +49,6 @@ class App extends Component{
 
   handle_login = (e, data) => {
     e.preventDefault();
-    // fetch(HOST+'/token-auth/', {
     fetch(HOST+'/api/token/',{
       method: 'POST',
       headers: {
@@ -57,9 +56,15 @@ class App extends Component{
       },
       body: JSON.stringify(data)
     })
-      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if(res.status === 401){
+          return -1;
+        }
+        return res.json();
+      })
       .then(json => {
-        if(json.non_field_errors){
+        if(json === -1 || json.non_field_errors){
           toast.error("Unable to log in with provided credentials.");  
           return;
         }
@@ -156,6 +161,9 @@ class App extends Component{
         })
       .then(res => res.json())
       .then(json => {
+        if(json.username == undefined){
+          return
+        }
         this.setState({ username: json.username });
         toast.success('Welcome ' + this.state.username);
       });

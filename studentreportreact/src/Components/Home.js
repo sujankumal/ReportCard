@@ -21,7 +21,11 @@ class Home extends Component {
                     toast.error('Unauthorized');
                     return
                 }
-
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
                 return res.json();
             })
             .then((data) => {
@@ -38,7 +42,7 @@ class Home extends Component {
         console.log(event.target.value);
     }
     render(){
-        const gradeItems =  this.state.grades.map((item)=><li>{item.id}</li>);
+        // const gradeItems =  this.state.grades.map((item)=><li>{item.id}</li>);
         return(
             <div className="container row home">
                 <div className="col-md-2">

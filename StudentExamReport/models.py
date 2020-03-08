@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 # Create your models here.
 
 class UserProfile():
@@ -28,6 +29,7 @@ class Subject(models.Model):
     code = models.CharField("Subject Code", max_length=10, unique=True)
     grade = models.ForeignKey("Grade",on_delete=models.CASCADE, verbose_name="Subjects Grade")
     marks = models.IntegerField("Subjects Mark")
+    teacher = models.ForeignKey(User,on_delete=models.CASCADE, verbose_name="Teacher")
 
     def __str__(self):
         return self.code

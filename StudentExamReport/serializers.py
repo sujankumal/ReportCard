@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
-from .models import Grade
+from .models import Exam, Grade, Subject, Student, StudentSubject, Result, ResultComment
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -39,4 +39,10 @@ class GradeSerializer(serializers.ModelSerializer):
    
    class Meta:
         model = Grade
+        fields = '__all__'
+
+class StudentSerializer(serializers.ModelSerializer):
+   
+   class Meta:
+        model = Student
         fields = '__all__'

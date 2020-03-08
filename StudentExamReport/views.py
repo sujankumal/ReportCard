@@ -11,8 +11,9 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from StudentExamReport.forms import LoginForm
-from .serializers import UserSerializer, UserSerializerWithToken, GradeSerializer
-from .models import Grade
+from .serializers import UserSerializer, UserSerializerWithToken, GradeSerializer,StudentSerializer
+from .models import Exam, Grade, Subject, Student, StudentSubject, Result, ResultComment
+
 # Create your views here.
 
 @api_view(['GET'])
@@ -20,7 +21,6 @@ def current_user(request):
     """
     Determine the current user by their token, and return their data
     """
-    
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
@@ -98,7 +98,10 @@ def verify_user(request):
 
 @api_view(['GET'])
 def teachers_view_grade(request):
-
     grades = Grade.objects.all()
     serialized_grades = GradeSerializer(grades, many=True)
     return Response(serialized_grades.data)
+
+@api_view(['GET'])
+def teachers_view_subject(request):
+    return Response('')

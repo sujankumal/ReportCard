@@ -11,7 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from StudentExamReport.forms import LoginForm
-from .serializers import UserSerializer, UserSerializerWithToken, GradeSerializer,StudentSerializer
+from .serializers import UserSerializer, UserSerializerWithToken, GradeSerializer,StudentSerializer, SubjectSerializer
 from .models import Exam, Grade, Subject, Student, StudentSubject, Result, ResultComment
 
 # Create your views here.
@@ -104,4 +104,6 @@ def teachers_view_grade(request):
 
 @api_view(['GET'])
 def teachers_view_subject(request):
-    return Response('')
+    subjects = Subject.objects.filter(teacher = User.objects.get(username = request.user))
+    serialized_subjects = SubjectSerializer(subjects, many=True)
+    return Response(serialized_subjects.data)

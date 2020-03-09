@@ -28,7 +28,7 @@ SECRET_KEY = 'ezorc-hf3^nvz^x(n^m=zob+rbqr$_e5^ovg-mxn*+vst$pvgy'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.67','localhost']
 
 
 # Application definition

@@ -7,6 +7,7 @@ class Home extends Component {
         this.state ={
             grades:[],
             student:{},
+            subjects:[],
         }
     }
     
@@ -17,6 +18,10 @@ class Home extends Component {
             headers: header ,     
             })
             .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
                 if(res.status == 401){
                     toast.error('Unauthorized');
                     return
@@ -32,17 +37,54 @@ class Home extends Component {
                 this.setState({grades:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:", typeof(error), error);
+                console.log("error:"+ typeof(error)+ error);
+            });
+    }
+    async teacher_get_subjects(){
+        const header = await this.props.auth_headers();
+        console.log(header);
+        await fetch(HOST+'/teachers-view-subjects/', {
+            method: 'GET',
+            headers: header ,     
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                this.setState({subjects:data});
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
             });
     }
     componentDidMount(){
         this.get_grades();   
+        this.teacher_get_subjects();
     }
     grade_selected(event){
         console.log(event.target.value);
     }
+    subject_selected(event){
+        console.log(event.target.value);
+        this.setState({
+            subjects:[]
+        });
+        this.teacher_get_subjects();
+    }
     render(){
-        // const gradeItems =  this.state.grades.map((item)=><li>{item.id}</li>);
         return(
             <div className="container row home">
                 <div className="col-md-2">
@@ -50,6 +92,12 @@ class Home extends Component {
                     <select onChange={(e)=>this.grade_selected(e)}>
                     {
                     this.state.grades.map((items, key) => 
+                    <option key={key} value={key}>{items.name}</option>
+                    )}
+                    </select>
+                    <select onChange={(e)=>this.subject_selected(e)}>
+                    {
+                    this.state.subjects.map((items, key) => 
                     <option key={key} value={key}>{items.name}</option>
                     )}
                     </select>

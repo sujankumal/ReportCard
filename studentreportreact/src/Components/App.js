@@ -18,32 +18,35 @@ toast.configure({
 class App extends Component{
   constructor(props){
     super(props);
-    const access_token = fetch(HOST+'/api/token/refresh/', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: `{
-          "refresh":"${localStorage.getItem('refresh')}"}`    
-      })
-      .then(res => res.json())
-      .then(json => {
-          if(json.non_field_errors){
-              toast.error("Couldn't Refresh. Something Went Wrong.");  
-              return;
-          }
-          return json.access;
-        })
-      .catch(function(error) {
-        toast.error("Sorry. Something went wrong while refreshing.");
-    });
+    const refresh_token = null;
+    const access_token = null;
+    const local_storage = false;
     this.state = {
       displayed_form: '',
-      logged_in: localStorage.getItem('refresh') ? true : false,
+      logged_in: this.get_refresh_token(local_storage) ? true : false,
       username: '',
       access_token:(access_token)? access_token:'',
+      refresh_token:(refresh_token)?refresh_token:'',
     }
   }
+  set_refresh_token(local, refresh){
+    if(!local){
+      // this.setState({
+      //   refresh_token:refresh,
+      // });
+      this.refresh_token = refresh;
+    }else{
+      localStorage.setItem('refresh', refresh);
+    }
+  }
+  get_refresh_token = (local)=>{
+    if(!local){
+      return this.refresh_token;
+    }else{
+      return localStorage.getItem('refresh');
+    }
+  }
+
   componentDidMount() {
   }
 
@@ -68,7 +71,9 @@ class App extends Component{
           toast.error("Unable to log in with provided credentials.");  
           return;
         }
-        localStorage.setItem('refresh', json.refresh);
+        this.set_refresh_token(this.local_storage, json.refresh);
+        // localStorage.setItem('refresh', json.refresh);
+        this.access_token = json.access;
         this.setState({
           logged_in: true,
           displayed_form: '',
@@ -94,7 +99,9 @@ class App extends Component{
     })
       .then(res => res.json())
       .then(json => {
-        localStorage.setItem('refresh', json.refresh);
+        this.set_refresh_token(this.local_storage, json.refresh);
+        // localStorage.setItem('refresh', json.refresh);
+        this.access_token = json.access;
         this.setState({
           logged_in: true,
           displayed_form: '',
@@ -106,7 +113,8 @@ class App extends Component{
   
   handle_logout = () => {
     localStorage.removeItem('refresh');
-    this.setState({ logged_in: false, username: '' });
+    this.setState({ logged_in: false, username: '', refresh_token:'' });
+    this.refresh_token = '';
   };
 
   display_form = form => {
@@ -125,9 +133,9 @@ class App extends Component{
   };
   auth_headers = async () => {
     // return authorization header with basic auth credentials
-    const access_token = await this.state.access_token;
-    if (access_token) { 
-      return { Authorization: `Bearer ${access_token}` };
+    // const access_token = await this.access_token;
+    if (this.access_token) { 
+      return { Authorization: `Bearer ${this.access_token}` };
     } else {
         return {};
     }
@@ -139,7 +147,7 @@ class App extends Component{
           'Content-Type': 'application/json'
       },
       body: `{
-          "refresh":"${localStorage.getItem('refresh')}"}`    
+          "refresh":"${this.get_refresh_token(this.local_storage)}"}`    
       })
       .then(res => res.json())
       .then(json => {

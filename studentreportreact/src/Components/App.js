@@ -26,14 +26,10 @@ class App extends Component{
       logged_in: this.get_refresh_token(local_storage) ? true : false,
       username: '',
       access_token:(access_token)? access_token:'',
-      refresh_token:(refresh_token)?refresh_token:'',
     }
   }
   set_refresh_token(local, refresh){
     if(!local){
-      // this.setState({
-      //   refresh_token:refresh,
-      // });
       this.refresh_token = refresh;
     }else{
       localStorage.setItem('refresh', refresh);
@@ -72,19 +68,14 @@ class App extends Component{
           return;
         }
         this.set_refresh_token(this.local_storage, json.refresh);
-        // localStorage.setItem('refresh', json.refresh);
-        this.access_token = json.access;
         this.setState({
           logged_in: true,
           displayed_form: '',
-          // username: json.user.username,
           access_token: json.access,
         });
-        console.log(json);
-        // toast.success("Logged in as "+json.user.username);
+        this.get_username();
       }).catch(function(error) {
         toast.error("Something went Wrong!");
-        console.log("error:", typeof(error), error);
     });
   };
 
@@ -100,14 +91,12 @@ class App extends Component{
       .then(res => res.json())
       .then(json => {
         this.set_refresh_token(this.local_storage, json.refresh);
-        // localStorage.setItem('refresh', json.refresh);
-        this.access_token = json.access;
         this.setState({
           logged_in: true,
           displayed_form: '',
-          // username: json.username,
           access_token: json.access,
         });
+        this.get_username();
       });
   };
   
@@ -131,11 +120,9 @@ class App extends Component{
       }
     );
   };
-  auth_headers = async () => {
-    // return authorization header with basic auth credentials
-    // const access_token = await this.access_token;
-    if (this.access_token) { 
-      return { Authorization: `Bearer ${this.access_token}` };
+  auth_headers = () => {
+    if (this.state.access_token) { 
+      return { Authorization: `Bearer ${this.state.access_token}` };
     } else {
         return {};
     }
@@ -162,7 +149,7 @@ class App extends Component{
     });
   }
   get_username = async() => {
-    const header = await this.auth_headers();
+    const header = this.auth_headers();
     await fetch(HOST+'/current_user/', {
         method: 'GET',
         headers: header ,     
@@ -202,7 +189,6 @@ class App extends Component{
           handle_logout={this.handle_logout}
           display_home = {this.display_home}
           username = {this.state.username}
-          get_username = {this.get_username}
         />
         {this.state.logged_in ? <Home auth_headers = {this.auth_headers} /> :form }
       

@@ -9,7 +9,6 @@ class Nav extends Component{
     super(props);
   }
   componentDidMount(){
-    this.props.get_username();
   }
 
   render(){

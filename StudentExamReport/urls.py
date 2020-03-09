@@ -6,6 +6,9 @@ app_name = 'StudentExamReport'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('user-login/', views.user_login, name="user_login"),
     path('user-register/', views.user_register, name="user_register"),
     path('user-logout/', views.user_logout, name="user_logout"),
@@ -13,8 +16,10 @@ urlpatterns = [
     path('current_user/', views.current_user),
     path('users/', views.UserList.as_view()),
     path('teachers-view-grade/', views.teachers_view_grade),
-    path('teachers-view-subjects/', views.teachers_view_subject),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('teachers-view-subjects/<int:grade>/', views.teachers_view_subject),
+    path('teachers-view-students/<int:subject>/', views.teachers_view_student),
+    path('teachers-view-exams/', views.teachers_view_exam),
+    path('teachers-process-results/<int:exam>/<int:student>/', views.teachers_process_results),
+
+    
 ]

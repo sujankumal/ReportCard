@@ -44,6 +44,11 @@ class App extends Component{
   }
 
   componentDidMount() {
+    setInterval(()=>{
+      if(this.get_refresh_token(this.local_storage)){
+        this.refresh_access_token();
+      }
+    }, 1000*60*4.5);
   }
 
   handle_login = (e, data) => {
@@ -102,7 +107,7 @@ class App extends Component{
   
   handle_logout = () => {
     localStorage.removeItem('refresh');
-    this.setState({ logged_in: false, username: '', refresh_token:'' });
+    this.setState({ logged_in: false, username: ''});
     this.refresh_token = '';
   };
 
@@ -142,6 +147,8 @@ class App extends Component{
               toast.error("Couldn't Refresh. Something Went Wrong.");  
               return;
           }
+          console.log('refreshed '+json.access);
+          this.setState({access_token:json.access});
           return json.access;
         })
       .catch(function(error) {

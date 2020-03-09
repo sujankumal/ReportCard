@@ -5,13 +5,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status, permissions
+from rest_framework import status, permissions, serializers
 from rest_framework.decorators import api_view 
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from StudentExamReport.forms import LoginForm
-from .serializers import UserSerializer, UserSerializerWithToken, GradeSerializer,StudentSerializer, SubjectSerializer
+from .serializers import UserSerializer, UserSerializerWithToken, GradeSerializer,StudentSerializer, SubjectSerializer, ExamSerializer
 from .models import Exam, Grade, Subject, Student, StudentSubject, Result, ResultComment
 
 # Create your views here.
@@ -98,12 +98,34 @@ def verify_user(request):
 
 @api_view(['GET'])
 def teachers_view_grade(request):
-    grades = Grade.objects.all()
-    serialized_grades = GradeSerializer(grades, many=True)
+    grades = list(set(qs["grade"] for qs in Subject.objects.filter(teacher = User.objects.get(username = request.user)).values('grade')))
+    gradedata = Grade.objects.filter(pk__in=grades)
+    serialized_grades = GradeSerializer(gradedata, many=True)
     return Response(serialized_grades.data)
 
 @api_view(['GET'])
-def teachers_view_subject(request):
-    subjects = Subject.objects.filter(teacher = User.objects.get(username = request.user))
+def teachers_view_subject(request, grade):
+    subjects = Subject.objects.filter(teacher = User.objects.get(username = request.user), grade = Grade.objects.get(pk =grade))
     serialized_subjects = SubjectSerializer(subjects, many=True)
     return Response(serialized_subjects.data)
+
+@api_view(['GET'])
+def teachers_view_student(request, subject):
+    students = list(set(querystudent["student"] for querystudent in StudentSubject.objects.filter(subject = Subject.objects.get(pk = subject)).values('student')))
+    studentdata = Student.objects.filter(pk__in=students)
+    serialized_students = StudentSerializer(studentdata, many=True)
+    return Response(serialized_students.data)
+
+
+@api_view(['GET'])
+def teachers_view_exam(request):
+    exams = Exam.objects.all()
+    serialized_exams = ExamSerializer(exams, many=True)
+    return Response(serialized_exams.data)
+
+
+@api_view(['GET'])
+def teachers_process_results(request, exam, student):
+    result = Result.objects.all()
+    print(exam, student)
+    return Response('')

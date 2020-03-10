@@ -11,7 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from StudentExamReport.forms import LoginForm
-from .serializers import UserSerializer, GradeSerializer,StudentSerializer, SubjectSerializer, ExamSerializer
+from .serializers import UserSerializer, GradeSerializer,StudentSerializer, SubjectSerializer, ExamSerializer, ResultSerializer
 from .models import Exam, Grade, Subject, Student, StudentSubject, Result, ResultComment
 
 # Create your views here.
@@ -105,13 +105,13 @@ def teachers_view_grade(request):
 
 @api_view(['GET'])
 def teachers_view_subject(request, grade):
-    subjects = Subject.objects.filter(teacher = User.objects.get(username = request.user), grade = Grade.objects.get(pk =grade))
+    subjects = Subject.objects.filter(teacher = User.objects.get(username = request.user), grade = grade)
     serialized_subjects = SubjectSerializer(subjects, many=True)
     return Response(serialized_subjects.data)
 
 @api_view(['GET'])
 def teachers_view_student(request, subject):
-    students = list(set(querystudent["student"] for querystudent in StudentSubject.objects.filter(subject = Subject.objects.get(pk = subject)).values('student')))
+    students = list(set(querystudent["student"] for querystudent in StudentSubject.objects.filter(subject = subject).values('student')))
     studentdata = Student.objects.filter(pk__in=students)
     serialized_students = StudentSerializer(studentdata, many=True)
     return Response(serialized_students.data)
@@ -129,3 +129,18 @@ def teachers_process_results(request, exam, student):
     result = Result.objects.all()
     print(exam, student)
     return Response('')
+
+
+@api_view(['POST'])
+def teachers_update_marks(request):
+    print(request.data)
+    return Response('')
+
+
+@api_view(['POST'])
+def teacher_view_students_marks(request):
+    students =list(qstu['id'] for qstu in Student.objects.filter(student_grade= request.data.get('grade')).values('id'))
+    # results = Result.objects.filter(student__in = students, exam = Exam.objects.get(pk = request.data.get('exam')), subject = Subject.objects.get(pk = request.data.get('subject')))
+    results = Result.objects.filter(student__in = students, exam = request.data.get('exam'), subject = request.data.get('subject'))
+    serialized_results = ResultSerializer(results, many=True)
+    return Response(serialized_results.data)

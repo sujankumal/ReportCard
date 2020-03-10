@@ -10,6 +10,7 @@ class Home extends Component {
             subjects:[],
             exams:[],
             results:[],
+            studentsresult:[],
             gradevalue:'',
             studentvalue:'',
             subjectvalue:'',
@@ -77,7 +78,43 @@ class Home extends Component {
             });
     }
 
-
+    async teacher_get_students_marks(){
+        let header = await this.props.auth_headers();
+        header['Content-Type'] = 'application/json';
+        await fetch(HOST+'/teachers-view-students_marks/', {
+            method: 'POST',
+            headers: header ,
+            body:JSON.stringify({
+                'grade': this.state.gradevalue,
+                'exam': this.state.examvalue,
+                'subject': this.state.subjectvalue,
+            })
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                this.setState({studentsresult:data});
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
+            });
+    }
+    
     async teacher_get_students(subject){
         const header = await this.props.auth_headers();
         await fetch(HOST+'/teachers-view-students/'+subject+'/', {
@@ -189,6 +226,7 @@ class Home extends Component {
             subjectvalue:event.target.value,
         });
         this.teacher_get_students(event.target.value);
+        this.teacher_get_students_marks();
     }
     student_selected(event){
         console.log(event.target.value);
@@ -209,14 +247,66 @@ class Home extends Component {
         });
         this.get_grades();
     }
-    update_marks(event){
-        console.log(this.state.gradevalue, this.state.examvalue, this.state.subjectvalue, event.target.id, event.target.value);
+    async teachers_update_marks(event){
+        let student = event.target.id;
+        let marks = event.target.value;
+        if(!marks){
+            console.log('Marks null');
+            return;
+        }
+        console.log(this.state.gradevalue, this.state.examvalue, this.state.subjectvalue, student, marks);
+        
+        let header = await this.props.auth_headers();
+        header['Content-Type'] = 'application/json';
+        let data = {
+            'grade': this.state.gradevalue,
+            'exam': this.state.examvalue,
+            'subject': this.state.subjectvalue,
+            'student': student, 
+            'marks': marks,
+        }
+        console.log(header);
+        await fetch(HOST+'/update-marks/', {
+            method: 'POST',
+            headers: header ,
+            body:JSON.stringify(data),
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                // this.setState({results:data});
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
+            });
     }
-    update_comment(event){
-        console.log(this.state.gradevalue, this.state.examvalue, this.state.subjectvalue, event.target.id, event.target.value);
+    async teachers_update_comment(event){
+        let student = event.target.id;
+        let comment = event.target.value;
+        console.log(this.state.gradevalue, this.state.examvalue, this.state.subjectvalue, student, comment);
+        
+        if(!comment){
+            console.log('Comment null');
+            return;
+        }
     }
     render(){
-        let exam_select = <li className="input-group">
+        let exam_select = <td className="input-group col-md-3">
                             <label className="form-control-sm">Subject</label>
                             <select onChange={(e)=>this.subject_selected(e)}  className="form-control form-control-sm" defaultValue="none">
                                 <option value="none" disabled hidden>Select an Option </option> 
@@ -225,7 +315,7 @@ class Home extends Component {
                                 <option key={key} value={items.id}>{items.name}</option>
                                 )}
                             </select>
-                        </li>
+                        </td>
         let result_form = <div className="row">
             <div className="col-md-6">
                 <table className="table table-responsive table-striped table-hover table-sm">
@@ -237,8 +327,8 @@ class Home extends Component {
                         <tr key={key}>
                             <th scope="row">{key+1}</th>
                             <td><span className="form-control-sm">{items.student_name}</span></td>
-                            <td><input type="number" id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.update_marks(e)}/></td>
-                            <td><input type="text" id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.update_comment(e)}/></td>
+                            <td><input type="number" id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_marks(e)}/></td>
+                            <td><input type="text" id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_comment(e)}/></td>
                         </tr>
                         )}
                     </tbody>
@@ -253,13 +343,12 @@ class Home extends Component {
                 <div className="fixed-bottom"><button onClick={()=>this.refresh()}>Click to refresh</button></div>
                 <div className="container">
                 <nav className="navbar navbar-expand-md navbar-light bg-light">
-                    <span className="navbar-brand" >Menu</span>
-                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                    <ul className="navbar-nav form-group">
-                        <li className="input-group ">
+                    <table className="table table-sm">
+                    <tbody>
+                    <tr className="navbar-nav form-group">
+                        <td className="navbar-brand" >Menu</td>
+                    
+                        <td className="input-group col-md-3">
                             <label className="form-control-sm">Grade</label>
                             <select onChange={(e)=>this.grade_selected(e)} className="form-control form-control-sm" defaultValue="none">
                                 <option value="none" disabled hidden>Select an Option </option> 
@@ -268,8 +357,8 @@ class Home extends Component {
                                 <option key={key} value={items.id}>{items.name}</option>
                                 )}
                             </select>
-                        </li>
-                        <li className="input-group ">
+                        </td>
+                        <td className="input-group col-md-3">
                             <label className="form-control-sm">Exam</label>
                             <select onChange={(e)=>this.exam_selected(e)}  className="form-control form-control-sm" defaultValue="none">
                                 <option value="none" disabled hidden>Select an Option </option> 
@@ -278,25 +367,17 @@ class Home extends Component {
                                 <option key={key} value={items.id}>{items.name}</option>
                                 )}
                             </select>
-                        </li>
+                        </td>
                         {(this.state.examvalue)? exam_select:null}
-                        {/* <li className="input-group ">
-                            <label className="form-control-sm">Students</label>
-                            <select onChange={(e)=>this.student_selected(e)}  className="form-control form-control-sm" defaultValue="none">
-                                <option value="none" disabled hidden>Select an Option </option> 
-                                {
-                                this.state.students.map((items, key) => 
-                                <option key={key} value={items.id}>{items.student_name}</option>
-                                )}
-                            </select>
-                        </li> */}
                         
-                    </ul>
-                    </div>     
+                    </tr>
+                    </tbody>
+                    </table>    
                 </nav>
-                <div>
-                    {(this.state.subjectvalue)?result_form:null}
                 </div>
+                
+                <div className="container">
+                    {(this.state.subjectvalue)?result_form:null}
                 </div>
             </div>
         );

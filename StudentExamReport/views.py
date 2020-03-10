@@ -11,7 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from StudentExamReport.forms import LoginForm
-from .serializers import UserSerializer, UserSerializerWithToken, GradeSerializer,StudentSerializer, SubjectSerializer, ExamSerializer
+from .serializers import UserSerializer, GradeSerializer,StudentSerializer, SubjectSerializer, ExamSerializer
 from .models import Exam, Grade, Subject, Student, StudentSubject, Result, ResultComment
 
 # Create your views here.
@@ -37,13 +37,13 @@ class UserList(APIView):
         if not user:
             return Response({'response' : 'error', 'message' : 'No data found'})
         
-        serializer = UserSerializerWithToken(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"response" : "error", "message" : serializer.errors})
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # serializer = UserSerializerWithToken(data=request.data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # else:
+        #     return Response({"response" : "error", "message" : serializer.errors})
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         
 @login_required(login_url='StudentExamReport:user_login')

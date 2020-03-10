@@ -209,6 +209,12 @@ class Home extends Component {
         });
         this.get_grades();
     }
+    update_marks(event){
+        console.log(this.state.gradevalue, this.state.examvalue, this.state.subjectvalue, event.target.id, event.target.value);
+    }
+    update_comment(event){
+        console.log(this.state.gradevalue, this.state.examvalue, this.state.subjectvalue, event.target.id, event.target.value);
+    }
     render(){
         let exam_select = <li className="input-group">
                             <label className="form-control-sm">Subject</label>
@@ -221,12 +227,24 @@ class Home extends Component {
                             </select>
                         </li>
         let result_form = <div className="row">
-            <div className="col-md-4">
-                <table className="table">
-                    <th><tr><td>Student</td><td>Marks</td></tr></th>
+            <div className="col-md-6">
+                <table className="table table-responsive table-striped table-hover table-sm">
+                    <thead>
+                        <tr><th>SN</th><th>Student</th><th>Marks</th><th>Comment</th></tr>
+                    </thead>
+                    <tbody>
+                        {this.state.students.map((items, key)=>
+                        <tr key={key}>
+                            <th scope="row">{key+1}</th>
+                            <td><span className="form-control-sm">{items.student_name}</span></td>
+                            <td><input type="number" id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.update_marks(e)}/></td>
+                            <td><input type="text" id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.update_comment(e)}/></td>
+                        </tr>
+                        )}
+                    </tbody>
                 </table>
             </div>
-            <div className="col-md-8">
+            <div className="col-md-6">
                     Hello world
             </div>
             </div>

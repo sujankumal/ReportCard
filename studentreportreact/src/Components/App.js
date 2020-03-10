@@ -86,23 +86,23 @@ class App extends Component{
 
   handle_signup = (e, data) => {
     e.preventDefault();
-    fetch(HOST + '/users/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(res => res.json())
-      .then(json => {
-        this.set_refresh_token(this.local_storage, json.refresh);
-        this.setState({
-          logged_in: true,
-          displayed_form: '',
-          access_token: json.access,
-        });
-        this.get_username();
-      });
+    // fetch(HOST + '/users/', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify(data)
+    // })
+    //   .then(res => res.json())
+    //   .then(json => {
+    //     this.set_refresh_token(this.local_storage, json.refresh);
+    //     this.setState({
+    //       logged_in: true,
+    //       displayed_form: '',
+    //       access_token: json.access,
+    //     });
+    //     this.get_username();
+    //   });
   };
   
   handle_logout = () => {

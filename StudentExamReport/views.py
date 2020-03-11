@@ -132,17 +132,29 @@ def teachers_process_results(request, exam, student):
 
 
 @api_view(['POST'])
-def teachers_update_marks(request):
+def teachers_update_student_mark(request):
     print(request.data)
     result, created = Result.objects.update_or_create(
         student = Student.objects.get(pk=request.data.get('student')), 
         exam = Exam.objects.get(pk=request.data.get('exam')),
         subject = Subject.objects.get(pk=request.data.get('subject')),
         defaults={'mark': request.data.get('marks'), 'teachers_comment': request.data.get('comment')},
+        # defaults={'mark': request.data.get('marks')},
+        )
+    return Response('')
+
+@api_view(['POST'])
+def teachers_update_student_comment(request):
+    print(request.data)
+    result, created = Result.objects.update_or_create(
+        student = Student.objects.get(pk=request.data.get('student')), 
+        exam = Exam.objects.get(pk=request.data.get('exam')),
+        subject = Subject.objects.get(pk=request.data.get('subject')),
+        defaults={'mark': request.data.get('marks'), 'teachers_comment': request.data.get('comment')},
+        # defaults={'teachers_comment': request.data.get('comment')},
         )
     
     return Response('')
-
 
 @api_view(['POST'])
 def teacher_view_students_marks(request):

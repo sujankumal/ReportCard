@@ -16,6 +16,9 @@ class Home extends Component {
             subjectvalue:'',
             examvalue:'',
         }
+        this.gradeselectRef = React.createRef();
+        this.examselectRef = React.createRef();
+        this.subjectselectRef = React.createRef();
     }
     
     async get_grades(){
@@ -217,7 +220,19 @@ class Home extends Component {
         console.log(event.target.value);
         this.setState({
             gradevalue:event.target.value,
+            // grades:[],
+            students:[],
+            subjects:[],
+            // exams:[],
+            results:[],
+            studentsresult:[],
+            // gradevalue:'',
+            studentvalue:'',
+            subjectvalue:'',
+            examvalue:'',
         });
+        this.examselectRef.current.selectedIndex=0;
+        (this.subjectselectRef)?this.subjectselectRef.current.selectedIndex=0:'';
         this.teacher_get_subjects(event.target.value);
     }
     subject_selected(event){
@@ -235,7 +250,20 @@ class Home extends Component {
     }
     exam_selected(event){
         console.log(event.target.value);
-        this.setState({examvalue:event.target.value});
+        (this.subjectselectRef)?this.subjectselectRef.current.selectedIndex=0:'';
+        this.setState({
+            examvalue:event.target.value,
+            // grades:[],
+            students:[],
+            // subjects:[],
+            // exams:[],
+            results:[],
+            studentsresult:[],
+            // gradevalue:'',
+            studentvalue:'',
+            subjectvalue:'',
+            // examvalue:'',
+        });
         // this.teacher_process_result(event.target.value, this.state.studentvalue);
     }
     refresh(){
@@ -250,24 +278,24 @@ class Home extends Component {
     async teachers_update_marks(event){
         let student = event.target.id;
         let marks = event.target.value;
+        event.target.value = null;
         if(!marks){
             console.log('Marks null');
             return;
         }
-        console.log(this.state.gradevalue, this.state.examvalue, this.state.subjectvalue, student, marks);
-        
         let header = await this.props.auth_headers();
         header['Content-Type'] = 'application/json';
+        let val = this.state.studentsresult.find(res=> res.student == student); 
         let data = {
             'grade': this.state.gradevalue,
             'exam': this.state.examvalue,
             'subject': this.state.subjectvalue,
-            'student': student, 
+            'student': student,
             'marks': marks,
-            'comment':'',
+            'comment':(val)?val.teachers_comment:'',
         }
         console.log(header);
-        await fetch(HOST+'/update-marks/', {
+        await fetch(HOST+'/teachers-update-student-mark/', {
             method: 'POST',
             headers: header ,
             body:JSON.stringify(data),
@@ -290,7 +318,7 @@ class Home extends Component {
             })
             .then((data) => {
                 console.log(data);
-                // this.setState({results:data});
+                this.teacher_get_students_marks();
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
                 console.log("error:"+ error);
@@ -299,8 +327,8 @@ class Home extends Component {
     async teachers_update_comment(event){
         let student = event.target.id;
         let comment = event.target.value;
-        console.log(this.state.gradevalue, this.state.examvalue, this.state.subjectvalue, student, comment);
-        
+        event.target.value = null;
+        let val = this.state.studentsresult.find(res=> res.student == student); 
         if(!comment){
             console.log('Comment null');
             return;
@@ -312,11 +340,11 @@ class Home extends Component {
             'exam': this.state.examvalue,
             'subject': this.state.subjectvalue,
             'student': student, 
-            'marks': null,
+            'marks': (val)?val.mark:0,
             'comment':comment,
         }
         console.log(header);
-        await fetch(HOST+'/update-marks/', {
+        await fetch(HOST+'/teachers-update-student-comment/', {
             method: 'POST',
             headers: header ,
             body:JSON.stringify(data),
@@ -339,26 +367,26 @@ class Home extends Component {
             })
             .then((data) => {
                 console.log(data);
-                // this.setState({results:data});
+                this.teacher_get_students_marks();
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
                 console.log("error:"+ error);
             });
     }
     find_st_mark=(items)=>{
-        let val = this.state.studentsresult.find(res =>res.student === items.id); 
+        let val = this.state.studentsresult.find(res =>res.student == items.id); 
         console.log((val)? val.mark:0);
         return (val)? val.mark:0;
     }
     find_st_tec_comment=(items)=>{ 
-        let val = this.state.studentsresult.find(res=> res.student === items.id); 
+        let val = this.state.studentsresult.find(res=> res.student == items.id); 
         console.log((val)?val.teachers_comment:'');
         return (val)?val.teachers_comment:'';
     }
     render(){
         let exam_select = <td className="input-group col-md-3">
                             <label className="form-control-sm">Subject</label>
-                            <select onChange={(e)=>this.subject_selected(e)}  className="form-control form-control-sm" defaultValue="none">
+                            <select onChange={(e)=>this.subject_selected(e)} ref={this.subjectselectRef}  className="form-control form-control-sm" defaultValue="none">
                                 <option value="none" disabled hidden>Select an Option </option> 
                                 {
                                 this.state.subjects.map((items, key) => 
@@ -400,7 +428,7 @@ class Home extends Component {
                     
                         <td className="input-group col-md-3">
                             <label className="form-control-sm">Grade</label>
-                            <select onChange={(e)=>this.grade_selected(e)} className="form-control form-control-sm" defaultValue="none">
+                            <select onChange={(e)=>this.grade_selected(e)} ref={this.gradeselectRef} className="form-control form-control-sm" defaultValue="none">
                                 <option value="none" disabled hidden>Select an Option </option> 
                                 {
                                 this.state.grades.map((items, key) => 
@@ -410,7 +438,7 @@ class Home extends Component {
                         </td>
                         <td className="input-group col-md-3">
                             <label className="form-control-sm">Exam</label>
-                            <select onChange={(e)=>this.exam_selected(e)}  className="form-control form-control-sm" defaultValue="none">
+                            <select onChange={(e)=>this.exam_selected(e)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
                                 <option value="none" disabled hidden>Select an Option </option> 
                                 {
                                 this.state.exams.map((items, key) => 

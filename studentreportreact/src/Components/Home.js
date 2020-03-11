@@ -264,6 +264,7 @@ class Home extends Component {
             'subject': this.state.subjectvalue,
             'student': student, 
             'marks': marks,
+            'comment':'',
         }
         console.log(header);
         await fetch(HOST+'/update-marks/', {
@@ -304,6 +305,55 @@ class Home extends Component {
             console.log('Comment null');
             return;
         }
+        let header = await this.props.auth_headers();
+        header['Content-Type'] = 'application/json';
+        let data = {
+            'grade': this.state.gradevalue,
+            'exam': this.state.examvalue,
+            'subject': this.state.subjectvalue,
+            'student': student, 
+            'marks': null,
+            'comment':comment,
+        }
+        console.log(header);
+        await fetch(HOST+'/update-marks/', {
+            method: 'POST',
+            headers: header ,
+            body:JSON.stringify(data),
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                // this.setState({results:data});
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
+            });
+    }
+    find_st_mark=(items)=>{
+        let val = this.state.studentsresult.find(res =>res.student === items.id); 
+        console.log((val)? val.mark:0);
+        return (val)? val.mark:0;
+    }
+    find_st_tec_comment=(items)=>{ 
+        let val = this.state.studentsresult.find(res=> res.student === items.id); 
+        console.log((val)?val.teachers_comment:'');
+        return (val)?val.teachers_comment:'';
     }
     render(){
         let exam_select = <td className="input-group col-md-3">
@@ -327,8 +377,8 @@ class Home extends Component {
                         <tr key={key}>
                             <th scope="row">{key+1}</th>
                             <td><span className="form-control-sm">{items.student_name}</span></td>
-                            <td><input type="number" id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_marks(e)}/></td>
-                            <td><input type="text" id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_comment(e)}/></td>
+                            <td><input type="number" placeholder={this.find_st_mark(items)} id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_marks(e)}/></td>
+                            <td><input type="text" placeholder={this.find_st_tec_comment(items)} id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_comment(e)}/></td>
                         </tr>
                         )}
                     </tbody>

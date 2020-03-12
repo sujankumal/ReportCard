@@ -263,15 +263,7 @@ class Home extends Component {
         });
         console.log((this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'');
     }
-    refresh(){
-        console.log("Home Refreshed");
-        this.setState({ 
-            grades:[],
-            students:[],
-            subjects:[],
-        });
-        this.get_grades();
-    }
+    
     async teachers_update_marks(event){
         let student = event.target.id;
         let marks = event.target.value;
@@ -423,9 +415,21 @@ class Home extends Component {
         let val = this.state.studentsresult.find(res =>res.student == items.id); 
         return (val)? val.mark:0;
     }
+    find_st_60_mark=(items)=>{
+        let val = this.state.studentsresult.find(res =>res.student == items.id); 
+        return (val)? 0.6* parseFloat(val.mark):0;
+    }
     find_st_cas=(items)=>{
         let val = this.state.studentsresult.find(res =>res.student == items.id); 
         return (val)? val.cas:0;
+    }
+    find_st_40_cas=(items)=>{
+        let val = this.state.studentsresult.find(res =>res.student == items.id); 
+        return (val)? 0.4* parseFloat(val.cas):0;
+    }
+    find_st_total=(items)=>{
+        let val = this.state.studentsresult.find(res =>res.student == items.id); 
+        return (val)? 0.6* parseFloat(val.mark) + 0.4* parseFloat(val.cas):0;
     }
     find_st_tec_comment=(items)=>{ 
         let val = this.state.studentsresult.find(res=> res.student == items.id); 
@@ -443,10 +447,10 @@ class Home extends Component {
                             </select>
                         </td>
         let result_form = <div className="row">
-            <div className="col-md-6">
+            <div className="container">
                 <table className="table table-responsive table-striped table-hover table-sm">
                     <thead>
-                        <tr><th>SN</th><th>Student</th><th>Theory</th><th>CAS</th><th>Comment</th></tr>
+                        <tr><th>SN</th><th>Student</th><th>Theory</th><th>CAS</th><th>60% of Theory</th><th>40% of CAS</th><th>Total</th></tr>
                     </thead>
                     <tbody>
                         {this.state.students.map((items, key)=>
@@ -455,19 +459,18 @@ class Home extends Component {
                             <td><span className="form-control-sm">{items.student_name}</span></td>
                             <td><input type="number" placeholder={this.find_st_mark(items)} id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_marks(e)}/></td>
                             <td><input type="number" placeholder={this.find_st_cas(items)} id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_cas(e)}/></td>
-                            <td><input type="text" placeholder={this.find_st_tec_comment(items)} id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_comment(e)}/></td>
+                            <td><span id={items.id} >{this.find_st_60_mark(items)}</span></td>
+                            <td><span id={items.id} >{this.find_st_40_cas(items)}</span></td>
+                            <td><span id={items.id} >{this.find_st_total(items)}</span></td>
+                            {/* <td><input type="text" placeholder={this.find_st_tec_comment(items)} id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_comment(e)}/></td> */}
                         </tr>
                         )}
                     </tbody>
                 </table>
             </div>
-            <div className="col-md-6">
-                    Hello world
-            </div>
             </div>
         return(
             <div className="container">
-                <div className="fixed-bottom"><button onClick={()=>this.refresh()}>Click to refresh</button></div>
                 <div className="container">
                 <nav className="navbar navbar-expand-md navbar-light bg-light">
                     <table className="table table-sm">

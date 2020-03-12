@@ -231,8 +231,8 @@ class Home extends Component {
             subjectvalue:'',
             examvalue:'',
         });
-        this.examselectRef.current.selectedIndex=0;
-        (this.subjectselectRef)?this.subjectselectRef.current.selectedIndex=0:'';
+        // this.examselectRef.current.selectedIndex=0;
+        console.log((this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'');
         this.teacher_get_subjects(event.target.value);
     }
     subject_selected(event){
@@ -250,7 +250,7 @@ class Home extends Component {
     }
     exam_selected(event){
         console.log(event.target.value);
-        (this.subjectselectRef)?this.subjectselectRef.current.selectedIndex=0:'';
+        console.log((this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'');
         this.setState({
             examvalue:event.target.value,
             // grades:[],

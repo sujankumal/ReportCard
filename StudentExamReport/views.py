@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status, permissions, serializers
 from rest_framework.decorators import api_view 
 from rest_framework.parsers import JSONParser
@@ -30,12 +30,12 @@ class UserList(APIView):
     method here too, for retrieving a list of all User objects.
     """
 
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, format=None):
-        user = request.data.get('user')
-        if not user:
-            return Response({'response' : 'error', 'message' : 'No data found'})
+    # def post(self, request, format=None):
+    #     user = request.data.get('user')
+    #     if not user:
+    #         return Response({'response' : 'error', 'message' : 'No data found'})
         
         # serializer = UserSerializerWithToken(data=request.data)
         # if serializer.is_valid():
@@ -138,7 +138,18 @@ def teachers_update_student_mark(request):
         student = Student.objects.get(pk=request.data.get('student')), 
         exam = Exam.objects.get(pk=request.data.get('exam')),
         subject = Subject.objects.get(pk=request.data.get('subject')),
-        defaults={'mark': request.data.get('marks'), 'teachers_comment': request.data.get('comment')},
+        defaults={'mark': request.data.get('marks'),'cas': request.data.get('cas'), 'teachers_comment': request.data.get('comment')},
+        # defaults={'mark': request.data.get('marks')},
+        )
+    return Response('')
+
+@api_view(['POST'])
+def teachers_update_student_cas(request):
+    result, created = Result.objects.update_or_create(
+        student = Student.objects.get(pk=request.data.get('student')), 
+        exam = Exam.objects.get(pk=request.data.get('exam')),
+        subject = Subject.objects.get(pk=request.data.get('subject')),
+        defaults={'mark': request.data.get('marks'),'cas': request.data.get('cas'), 'teachers_comment': request.data.get('comment')},
         # defaults={'mark': request.data.get('marks')},
         )
     return Response('')
@@ -150,7 +161,7 @@ def teachers_update_student_comment(request):
         student = Student.objects.get(pk=request.data.get('student')), 
         exam = Exam.objects.get(pk=request.data.get('exam')),
         subject = Subject.objects.get(pk=request.data.get('subject')),
-        defaults={'mark': request.data.get('marks'), 'teachers_comment': request.data.get('comment')},
+        defaults={'mark': request.data.get('marks'),'cas': request.data.get('cas'), 'teachers_comment': request.data.get('comment')},
         # defaults={'teachers_comment': request.data.get('comment')},
         )
     

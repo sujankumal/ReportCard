@@ -217,7 +217,6 @@ class Home extends Component {
         this.teacher_get_exams();
     }
     grade_selected(event){
-        console.log(event.target.value);
         this.setState({
             gradevalue:event.target.value,
             // grades:[],
@@ -231,9 +230,10 @@ class Home extends Component {
             subjectvalue:'',
             examvalue:'',
         });
-        // this.examselectRef.current.selectedIndex=0;
-        console.log((this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'');
         this.teacher_get_subjects(event.target.value);
+        console.log((this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'',
+        (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'');
+        
     }
     subject_selected(event){
         console.log(event.target.value);
@@ -246,11 +246,8 @@ class Home extends Component {
     student_selected(event){
         console.log(event.target.value);
         this.setState({studentvalue:event.target.value});
-        // this.teacher_get_exams(event.target.value);
     }
     exam_selected(event){
-        console.log(event.target.value);
-        console.log((this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'');
         this.setState({
             examvalue:event.target.value,
             // grades:[],
@@ -264,7 +261,7 @@ class Home extends Component {
             subjectvalue:'',
             // examvalue:'',
         });
-        // this.teacher_process_result(event.target.value, this.state.studentvalue);
+        console.log((this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'');
     }
     refresh(){
         console.log("Home Refreshed");
@@ -292,10 +289,59 @@ class Home extends Component {
             'subject': this.state.subjectvalue,
             'student': student,
             'marks': marks,
+            'cas':(val)?val.cas:0,
             'comment':(val)?val.teachers_comment:'',
         }
-        console.log(header);
         await fetch(HOST+'/teachers-update-student-mark/', {
+            method: 'POST',
+            headers: header ,
+            body:JSON.stringify(data),
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                this.teacher_get_students_marks();
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
+            });
+    }
+    async teachers_update_cas(event){
+        let student = event.target.id;
+        let cas = event.target.value;
+        event.target.value = null;
+        if(!cas){
+            console.log('CAS null');
+            return;
+        }
+        let header = await this.props.auth_headers();
+        header['Content-Type'] = 'application/json';
+        let val = this.state.studentsresult.find(res=> res.student == student); 
+        let data = {
+            'grade': this.state.gradevalue,
+            'exam': this.state.examvalue,
+            'subject': this.state.subjectvalue,
+            'student': student,
+            'marks': (val)?val.mark:0,
+            'cas':cas,
+            'comment':(val)?val.teachers_comment:'',
+        }
+        await fetch(HOST+'/teachers-update-student-cas/', {
             method: 'POST',
             headers: header ,
             body:JSON.stringify(data),
@@ -341,9 +387,9 @@ class Home extends Component {
             'subject': this.state.subjectvalue,
             'student': student, 
             'marks': (val)?val.mark:0,
+            'cas':(val)?val.cas:0,
             'comment':comment,
         }
-        console.log(header);
         await fetch(HOST+'/teachers-update-student-comment/', {
             method: 'POST',
             headers: header ,
@@ -375,12 +421,14 @@ class Home extends Component {
     }
     find_st_mark=(items)=>{
         let val = this.state.studentsresult.find(res =>res.student == items.id); 
-        console.log((val)? val.mark:0);
         return (val)? val.mark:0;
+    }
+    find_st_cas=(items)=>{
+        let val = this.state.studentsresult.find(res =>res.student == items.id); 
+        return (val)? val.cas:0;
     }
     find_st_tec_comment=(items)=>{ 
         let val = this.state.studentsresult.find(res=> res.student == items.id); 
-        console.log((val)?val.teachers_comment:'');
         return (val)?val.teachers_comment:'';
     }
     render(){
@@ -398,7 +446,7 @@ class Home extends Component {
             <div className="col-md-6">
                 <table className="table table-responsive table-striped table-hover table-sm">
                     <thead>
-                        <tr><th>SN</th><th>Student</th><th>Marks</th><th>Comment</th></tr>
+                        <tr><th>SN</th><th>Student</th><th>Theory</th><th>CAS</th><th>Comment</th></tr>
                     </thead>
                     <tbody>
                         {this.state.students.map((items, key)=>
@@ -406,6 +454,7 @@ class Home extends Component {
                             <th scope="row">{key+1}</th>
                             <td><span className="form-control-sm">{items.student_name}</span></td>
                             <td><input type="number" placeholder={this.find_st_mark(items)} id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_marks(e)}/></td>
+                            <td><input type="number" placeholder={this.find_st_cas(items)} id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_cas(e)}/></td>
                             <td><input type="text" placeholder={this.find_st_tec_comment(items)} id={items.id} className="form-control form-control-sm" onBlur={(e)=>this.teachers_update_comment(e)}/></td>
                         </tr>
                         )}

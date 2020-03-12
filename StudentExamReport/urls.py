@@ -23,6 +23,7 @@ urlpatterns = [
     # path('update-marks/', views.teachers_update_marks),
     path('teachers-view-students_marks/',views.teacher_view_students_marks),
     path('teachers-update-student-mark/',views.teachers_update_student_mark),
+    path('teachers-update-student-cas/',views.teachers_update_student_cas),
     path('teachers-update-student-comment/',views.teachers_update_student_comment),
     
 ]

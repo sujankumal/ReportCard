@@ -63,6 +63,7 @@ class Result(models.Model):
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     mark = models.IntegerField()
+    cas = models.IntegerField()
     teachers_comment = models.CharField("Teacher's Comment", max_length=300)
 
     def __str__(self):

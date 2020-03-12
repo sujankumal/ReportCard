@@ -417,7 +417,7 @@ class Home extends Component {
     }
     find_st_60_mark=(items)=>{
         let val = this.state.studentsresult.find(res =>res.student == items.id); 
-        return (val)? 0.6* parseFloat(val.mark):0;
+        return (val)? (0.6* parseFloat(val.mark)).toFixed(2):0;
     }
     find_st_cas=(items)=>{
         let val = this.state.studentsresult.find(res =>res.student == items.id); 
@@ -425,11 +425,11 @@ class Home extends Component {
     }
     find_st_40_cas=(items)=>{
         let val = this.state.studentsresult.find(res =>res.student == items.id); 
-        return (val)? 0.4* parseFloat(val.cas):0;
+        return (val)? (0.4* parseFloat(val.cas)).toFixed(2):0;
     }
     find_st_total=(items)=>{
         let val = this.state.studentsresult.find(res =>res.student == items.id); 
-        return (val)? 0.6* parseFloat(val.mark) + 0.4* parseFloat(val.cas):0;
+        return (val)? (0.6* parseFloat(val.mark) + 0.4* parseFloat(val.cas)).toFixed(2):0;
     }
     find_st_tec_comment=(items)=>{ 
         let val = this.state.studentsresult.find(res=> res.student == items.id); 

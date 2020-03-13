@@ -183,7 +183,8 @@ class App extends Component{
         (this.state.logged_in)? form =<Home/> : form = <Welcome/>
         break;
       default:
-        form = <Welcome />;
+        // form = <Welcome />;
+        form = <LoginForm handle_login={this.handle_login} />;
     }
     return (
       <div className="App">

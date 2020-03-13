@@ -104,15 +104,21 @@ def teachers_view_grade(request):
     return Response(serialized_grades.data)
 
 @api_view(['GET'])
-def teachers_view_subject(request, grade):
+def teachers_view_subject_by_grade(request, grade):
     subjects = Subject.objects.filter(teacher = User.objects.get(username = request.user), grade = grade)
     serialized_subjects = SubjectSerializer(subjects, many=True)
     return Response(serialized_subjects.data)
 
 @api_view(['GET'])
-def teachers_view_student(request, subject):
+def teachers_view_student_by_subject(request, subject):
     students = list(set(querystudent["student"] for querystudent in StudentSubject.objects.filter(subject = subject).values('student')))
     studentdata = Student.objects.filter(pk__in=students)
+    serialized_students = StudentSerializer(studentdata, many=True)
+    return Response(serialized_students.data)
+
+@api_view(['GET'])
+def teachers_view_students_by_grade(request, grade):
+    studentdata = Student.objects.filter(student_grade=grade)
     serialized_students = StudentSerializer(studentdata, many=True)
     return Response(serialized_students.data)
 

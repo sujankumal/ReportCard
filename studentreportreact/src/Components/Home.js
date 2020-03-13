@@ -217,9 +217,9 @@ class Home extends Component {
     }
 
 
-    async teacher_process_result(exam, student){
+    async get_exam_result_by_grade(exam, grade){
         const header = await this.props.auth_headers();
-        await fetch(HOST+'/teachers-process-results/'+exam+'/'+student+'/', {
+        await fetch(HOST+'/get-exam-result-by-grade/'+exam+'/'+grade+'/', {
             method: 'GET',
             headers: header ,
             })
@@ -297,6 +297,13 @@ class Home extends Component {
             subjectvalue:'',
             // examvalue:'',
         });
+        if(this.state.classmarksclicked){
+            if(this.state.gradevalue){
+                this.get_exam_result_by_grade(event.target.value, this.state.gradevalue);
+            }else{
+                toast.warn('Please Select Grade');
+            }
+        }
         console.log((this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'');
     }
     
@@ -587,10 +594,62 @@ class Home extends Component {
             <div>
                 Student Result
             </div>
-        
         let class_marks_diaplay = 
-            <div>
-                Class Marks
+            <div className="container ">
+                <table className="table table-responsive table-bordered table-striped table-hover table-sm">
+                <caption>Terminal assess</caption>
+                    <thead>
+                        <tr>
+                            <th>SN </th><th>Student</th>{this.state.subjects.map((subject, index) => <th key={index}>{subject.name}</th>)}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {this.state.gradestudents.map((student, key)=> 
+                            <tr key = {key}>
+                                <td>{key+1}</td>
+                                <td>{student.student_name}</td>
+                                {this.state.subjects.map(
+                                    (subject, index) => 
+                                    <td key={index}>
+                                        {this.state.results.map(
+                                            result=>(result.student == student.id && 
+                                                result.subject == subject.id && 
+                                                result.exam == this.state.examvalue)?
+                                                parseFloat(result.mark).toFixed(2):null)
+                                        }
+                                    </td>
+                                )}
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+                <table className="table table-responsive table-bordered table-striped table-hover table-sm">
+                <caption>CAS assess</caption>
+                    <thead>
+                        <tr>
+                            <th>SN </th><th>Student</th>{this.state.subjects.map((subject, index) => <th key={index}>{subject.name}</th>)}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {this.state.gradestudents.map((student, key)=> 
+                            <tr key = {key}>
+                                <td>{key+1}</td>
+                                <td>{student.student_name}</td>
+                                {this.state.subjects.map(
+                                    (subject, index) => 
+                                    <td key={index}>
+                                        {this.state.results.map(
+                                            result=>(result.student == student.id && 
+                                                result.subject == subject.id && 
+                                                result.exam == this.state.examvalue)?
+                                                parseFloat(result.cas).toFixed(2):null)
+                                        }
+                                    </td>
+                                )}
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
             </div>
         return(
             <div className="container">
@@ -640,10 +699,7 @@ class Home extends Component {
                 </nav>
                 </div>
                 
-                <div className="container">
-                    {/* {(this.state.subjectvalue)?result_form:null} */}
-                    {(this.state.inputresultclicked)? (this.state.subjectvalue)?result_form:null:(this.state.studnetresultclicked)?student_result_display:(this.state.classmarksclicked)?class_marks_diaplay:null}
-                </div>
+                {(this.state.inputresultclicked)? (this.state.subjectvalue)?result_form:null:(this.state.studnetresultclicked)?student_result_display:(this.state.classmarksclicked && this.state.subjects.length != 0)?class_marks_diaplay:null}
             </div>
         );
     }

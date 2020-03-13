@@ -131,10 +131,10 @@ def teachers_view_exam(request):
 
 
 @api_view(['GET'])
-def teachers_process_results(request, exam, student):
-    result = Result.objects.all()
-    print(exam, student)
-    return Response('')
+def get_exam_result(request, exam, grade):
+    results = Result.objects.filter(exam=exam,student__student_grade=grade)
+    serialized_result = ResultSerializer(results, many=True)
+    return Response(serialized_result.data)
 
 
 @api_view(['POST'])

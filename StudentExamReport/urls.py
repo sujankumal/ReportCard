@@ -20,7 +20,7 @@ urlpatterns = [
     path('teachers-view-students-by-subject/<int:subject>/', views.teachers_view_student_by_subject),
     path('teachers-view-students-by-grade/<int:grade>/', views.teachers_view_students_by_grade),
     path('teachers-view-exams/', views.teachers_view_exam),
-    path('teachers-process-results/<int:exam>/<int:student>/', views.teachers_process_results),
+    path('get-exam-result-by-grade/<int:exam>/<int:grade>/', views.get_exam_result),
     # path('update-marks/', views.teachers_update_marks),
     path('teachers-view-students_marks/',views.teacher_view_students_marks),
     path('teachers-update-student-mark/',views.teachers_update_student_mark),

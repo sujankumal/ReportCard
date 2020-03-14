@@ -11,6 +11,9 @@ class StudentResult extends Component{
             students:[],
             grades:[],
             gradestudents:[],
+            graderesults:[],
+            gradesubjects:[],
+            studentresults:[],
             examvalue:null,
             gradevalue:null,
             studentvalue:null,
@@ -111,6 +114,68 @@ class StudentResult extends Component{
                 console.log("error:"+ error);
             });
     }
+
+    async get_student_result(student, exam){
+        const header = await this.props.auth_headers();
+        await fetch(HOST+'/get-student-result/'+student+'/'+exam+'/', {
+            method: 'GET',
+            headers: header ,
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                this.setState({studentresults:data});
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
+            });
+    }
+
+    async get_subjects_by_grade(grade){
+        const header = await this.props.auth_headers();
+        await fetch(HOST+'/teachers-view-subjects-grade/'+grade+'/', {
+            method: 'GET',
+            headers: header ,
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                this.setState({gradesubjects:data});
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
+            });
+    }
     componentDidMount(){
         this.get_grades();
         this.teacher_get_exams();
@@ -118,15 +183,33 @@ class StudentResult extends Component{
     }
 
     grade_selected(e){
-
+        this.setState({
+            gradevalue: e.target.value,
+            studentresults:[],
+        });
     }
 
     student_selected(e){
-
+        this.setState({
+            studentvalue: e.target.value,
+            studentresults:[],
+        });
+        console.log(
+            // (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
+            (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
+            // (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
+            );
     }
 
     exam_selected(e){
-
+        this.setState({
+            examvalue: e.target.value,
+            studentresults:[],
+        });
+        let studentid =  this.state.studentvalue;
+        this.get_student_result(studentid, e.target.value);
+        let studentgrade = this.state.students.find(std=>std.id==studentid).student_grade;
+        this.get_subjects_by_grade(studentgrade);
     }
 
     student_result_clicked = () =>{
@@ -140,7 +223,7 @@ class StudentResult extends Component{
         console.log(
             (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
             (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-            (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
+            // (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
             );
     }
     grade_student_result_clicked = () =>{
@@ -156,6 +239,65 @@ class StudentResult extends Component{
             (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
             (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
             );
+    }
+
+    result_table(){
+        if(this.state.gradestudentresultclicked){
+            // all students of grade
+        }else{
+            // single student
+            let exam = this.state.examvalue;
+            if(exam){
+                let exam_title = this.state.exams.find(item=> item.id == exam).name;
+                let students = this.state.students;
+                let studentselected = this.state.studentvalue;
+                let student = students.find(std => std.id == studentselected);
+                let results = this.state.studentresults;
+                let gradesubjects = this.state.gradesubjects;
+                return (<div className="container">
+                <table className="table table-responsive table-bordered table-striped table-hover table-sm">
+                    <thead>
+                        <tr><th colSpan="0" className="text-center">{exam_title}</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colSpan="5">Name: {student.student_name}</td>
+                            <td colSpan="2">Class: {this.state.grades.find(grade=>grade.id == student.student_grade).name}</td>
+                            <td>Class Teacher Remarks</td>
+                        </tr>
+                        <tr>
+                            <td>SN</td>
+                            <td>Subjects</td>
+                            <td>Theory</td>
+                            <td>Practical</td>
+                            <td>Total</td>
+                            <td>GPA</td>
+                            <td>Grade</td>
+                            <td rowSpan="0"></td>
+                        </tr>
+                        {
+                            (results.length>0)?results.map((result,index)=>{
+                                let theory = Math.round(0.6*parseFloat(result.mark));
+                                let practical = Math.round( 0.4*parseFloat(result.cas));
+                                let total = theory +practical;
+                                return <tr key={index}>
+                                    <td>{index+1}</td>
+                                    {/* Correct here and in home class mark display map */}
+                                    <td>{gradesubjects.map(subject=> (subject.id == result.subject)?subject.name:null)}</td>
+                                    <td>{theory}</td>
+                                    <td>{practical}</td>
+                                    <td>{total}</td>
+                                </tr>
+                                }
+                                ):null          
+                        }
+                    </tbody>
+                </table>
+                </div>
+                );
+            }
+        }
+        
     }
     render(){
         let grade_select = <td className="input-group col-md-3">
@@ -216,14 +358,14 @@ class StudentResult extends Component{
                     {(this.state.gradestudentresultclicked && this.state.gradevalue)?exam_select:null}
                     {(this.state.gradestudentresultclicked && this.state.gradevalue && this.state.examvalue)?student_select:null}
                     {(this.state.studentresultclicked)?student_select:null}
+                    {(this.state.studentresultclicked && this.state.studentvalue)?exam_select:null}
                     
                 </tr>
                 </tbody>
                 </table>    
             </nav>
             </div>
-            {/* {(this.state.inputresultclicked)? (this.state.subjectvalue)?result_form:null:(this.state.classmarksclicked && this.state.subjects.length != 0)?class_marks_diaplay:null} */}
-            {/* {(this.state.inputresultclicked)? (this.state.subjectvalue)?result_form:null:(this.state.studentresultclicked && this.state.studentvalue)?student_result_display:(this.state.classmarksclicked && this.state.subjects.length != 0)?class_marks_diaplay:null} */}
+            {(this.state.studentresultclicked || this.state.gradestudentresultclicked)?this.result_table():null}
         </div>
             )
     }

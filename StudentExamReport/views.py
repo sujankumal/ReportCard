@@ -148,6 +148,11 @@ def get_exam_result(request, exam, grade):
     serialized_result = ResultSerializer(results, many=True)
     return Response(serialized_result.data)
 
+@api_view(['GET'])
+def get_student_result(request, student, exam):
+    result = Result.objects.filter(exam=exam, student=student)
+    serialized_result = ResultSerializer(result, many=True)
+    return Response(serialized_result.data)
 
 @api_view(['POST'])
 def teachers_update_student_mark(request):

@@ -614,6 +614,12 @@ class Home extends Component {
                                                 result.exam == this.state.examvalue)?
                                                 parseFloat(result.mark).toFixed(2):null)
                                         }
+                                        {/* {parseFloat(this.state.results.find(
+                                            result=> result.student == student.id && 
+                                                result.subject == subject.id && 
+                                                result.exam == this.state.examvalue
+                                                ).mark).toFixed(2)
+                                        } */}
                                     </td>
                                 )}
                             </tr>

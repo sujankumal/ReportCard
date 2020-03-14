@@ -99,7 +99,14 @@ def verify_user(request):
 @api_view(['GET'])
 def teachers_view_grade(request):
     grades = list(set(qs["grade"] for qs in Subject.objects.filter(teacher = User.objects.get(username = request.user)).values('grade')))
-    gradedata = Grade.objects.filter(pk__in=grades)
+    gradedata = Grade.objects.filter(pk__in=grades).order_by('name')
+    serialized_grades = GradeSerializer(gradedata, many=True)
+    return Response(serialized_grades.data)
+
+
+@api_view(['GET'])
+def view_grades(request):
+    gradedata = Grade.objects.all().order_by('name')
     serialized_grades = GradeSerializer(gradedata, many=True)
     return Response(serialized_grades.data)
 
@@ -125,10 +132,15 @@ def teachers_view_students_by_grade(request, grade):
 
 @api_view(['GET'])
 def teachers_view_exam(request):
-    exams = Exam.objects.all()
+    exams = Exam.objects.all().order_by('-pk')
     serialized_exams = ExamSerializer(exams, many=True)
     return Response(serialized_exams.data)
 
+@api_view(['GET'])
+def view_all_students(request):
+    students = Student.objects.all().order_by('student_name')
+    serialized_students = StudentSerializer(students, many=True)
+    return Response(serialized_students.data)
 
 @api_view(['GET'])
 def get_exam_result(request, exam, grade):

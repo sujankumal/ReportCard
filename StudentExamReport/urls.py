@@ -15,6 +15,8 @@ urlpatterns = [
     path('user_verify/', views.verify_user, name="verify_user"),
     path('current_user/', views.current_user),
     path('users/', views.UserList.as_view()),
+    path('view-grades/', views.view_grades),
+    path('get-all-students/', views.view_all_students),
     path('teachers-view-grade/', views.teachers_view_grade),
     path('teachers-view-subjects-grade/<int:grade>/', views.teachers_view_subject_by_grade),
     path('teachers-view-students-by-subject/<int:subject>/', views.teachers_view_student_by_subject),

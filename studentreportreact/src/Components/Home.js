@@ -501,26 +501,27 @@ class Home extends Component {
             );
     }
     student_result_clicked=()=>{
-        this.setState({
-            // grades:[],
-            // students:[],
-            // subjects:[],
-            // exams:[],
-            // results:[],
-            // studentsresult:[],
-            gradevalue:'',
-            studentvalue:'',
-            subjectvalue:'',
-            examvalue:'',
-            inputresultclicked:false,
-            studnetresultclicked:true,
-            classmarksclicked:false,
-        });
-        console.log(
-            (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
-            (this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'',
-            (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-            );
+        // this.setState({
+        //     // grades:[],
+        //     // students:[],
+        //     // subjects:[],
+        //     // exams:[],
+        //     // results:[],
+        //     // studentsresult:[],
+        //     gradevalue:'',
+        //     studentvalue:'',
+        //     subjectvalue:'',
+        //     examvalue:'',
+        //     inputresultclicked:false,
+        //     studnetresultclicked:true,
+        //     classmarksclicked:false,
+        // });
+        // console.log(
+        //     (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
+        //     (this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'',
+        //     (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
+        //     );
+        this.props.show_result();
     }
     class_marks_clicked=()=>{
         this.setState({
@@ -590,10 +591,6 @@ class Home extends Component {
             </div>
             </div>
         
-        let student_result_display = 
-            <div>
-                Student Result
-            </div>
         let class_marks_diaplay = 
             <div className="container ">
                 <table className="table table-responsive table-bordered table-striped table-hover table-sm">
@@ -698,8 +695,8 @@ class Home extends Component {
                     </table>    
                 </nav>
                 </div>
-                
-                {(this.state.inputresultclicked)? (this.state.subjectvalue)?result_form:null:(this.state.studnetresultclicked)?student_result_display:(this.state.classmarksclicked && this.state.subjects.length != 0)?class_marks_diaplay:null}
+                {(this.state.inputresultclicked)? (this.state.subjectvalue)?result_form:null:(this.state.classmarksclicked && this.state.subjects.length != 0)?class_marks_diaplay:null}
+                {/* {(this.state.inputresultclicked)? (this.state.subjectvalue)?result_form:null:(this.state.studnetresultclicked && this.state.studentvalue)?student_result_display:(this.state.classmarksclicked && this.state.subjects.length != 0)?class_marks_diaplay:null} */}
             </div>
         );
     }

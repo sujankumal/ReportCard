@@ -10,6 +10,7 @@ import Home from './Home';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {TITLE, HOST} from './constants';
+import Result from './Result';
 toast.configure({
   autoClose: 3000,
   draggable: false,
@@ -26,6 +27,7 @@ class App extends Component{
       logged_in: this.get_refresh_token(local_storage) ? true : false,
       username: '',
       access_token:(access_token)? access_token:'',
+      display_result: false,
     }
   }
   set_refresh_token(local, refresh){
@@ -170,6 +172,16 @@ class App extends Component{
         toast.success('Welcome ' + this.state.username);
       });
   }
+  show_result=()=>{
+    this.setState({
+      display_result:true,
+    });
+  }
+  show_home=()=>{
+    this.setState({
+      display_result:false,
+    });
+  }
   render() {
     let form;
     switch (this.state.displayed_form) {
@@ -198,7 +210,7 @@ class App extends Component{
           display_home = {this.display_home}
           username = {this.state.username}
         />
-        {this.state.logged_in ? <Home auth_headers = {this.auth_headers} /> :form }
+        {this.state.logged_in ? (this.state.display_result)?<Result auth_headers = {this.auth_headers} show_home={this.show_home}/>:<Home auth_headers = {this.auth_headers} show_result= {this.show_result}/> :form }
       
       </div>
     );

@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username',)
+        fields = ('username','id')
 
 
 # class UserSerializerWithToken(serializers.ModelSerializer):
@@ -63,4 +63,10 @@ class ResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Result
+        fields = '__all__'
+
+class ResultCommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ResultComment
         fields = '__all__'

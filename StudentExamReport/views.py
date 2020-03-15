@@ -11,7 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from StudentExamReport.forms import LoginForm
-from .serializers import UserSerializer, GradeSerializer,StudentSerializer, SubjectSerializer, ExamSerializer, ResultSerializer
+from .serializers import UserSerializer, GradeSerializer,StudentSerializer, SubjectSerializer, ExamSerializer, ResultSerializer, ResultCommentSerializer
 from .models import Exam, Grade, Subject, Student, StudentSubject, Result, ResultComment
 
 # Create your views here.
@@ -205,3 +205,21 @@ def teacher_view_students_marks(request):
     results = Result.objects.filter(student__in = students, exam = request.data.get('exam'), subject = request.data.get('subject'))
     serialized_results = ResultSerializer(results, many=True)
     return Response(serialized_results.data)
+
+
+@api_view(['GET'])
+def find_exam_comment(request, exam):
+    comments = ResultComment.objects.filter(exam=exam)
+    serialized_comment = ResultCommentSerializer(comments, many=True)
+    return Response(serialized_comment.data)
+
+@api_view(['POST'])
+def update_result_comment(request):
+    result, created = ResultComment.objects.update_or_create(
+        student = Student.objects.get(pk=request.data.get('student')), 
+        exam = Exam.objects.get(pk=request.data.get('exam')),
+        defaults={'result_comment': request.data.get('comment')},
+        )
+    comments = ResultComment.objects.filter(exam=request.data.get('exam'))
+    serialized_comment = ResultCommentSerializer(comments, many=True)
+    return Response(serialized_comment.data)

@@ -26,6 +26,7 @@ class App extends Component{
       displayed_form: '',
       logged_in: this.get_refresh_token(local_storage) ? true : false,
       username: '',
+      userid:'',
       access_token:(access_token)? access_token:'',
       display_result: false,
     }
@@ -109,7 +110,7 @@ class App extends Component{
   
   handle_logout = () => {
     localStorage.removeItem('refresh');
-    this.setState({ logged_in: false, username: ''});
+    this.setState({ logged_in: false, username: '', userid:''});
     this.refresh_token = '';
   };
 
@@ -168,7 +169,7 @@ class App extends Component{
         if(json.username == undefined){
           return
         }
-        this.setState({ username: json.username });
+        this.setState({ username: json.username, userid: json.id });
         toast.success('Welcome ' + this.state.username);
       });
   }
@@ -210,7 +211,7 @@ class App extends Component{
           display_home = {this.display_home}
           username = {this.state.username}
         />
-        {this.state.logged_in ? (this.state.display_result)?<Result auth_headers = {this.auth_headers} show_home={this.show_home}/>:<Home auth_headers = {this.auth_headers} show_result= {this.show_result}/> :form }
+        {this.state.logged_in ? (this.state.display_result)?<Result auth_headers = {this.auth_headers} show_home={this.show_home} userid ={this.state.userid}/>:<Home auth_headers = {this.auth_headers} show_result= {this.show_result}/> :form }
       
       </div>
     );

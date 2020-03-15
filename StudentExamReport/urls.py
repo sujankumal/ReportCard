@@ -29,5 +29,6 @@ urlpatterns = [
     path('teachers-update-student-mark/',views.teachers_update_student_mark),
     path('teachers-update-student-cas/',views.teachers_update_student_cas),
     path('teachers-update-student-comment/',views.teachers_update_student_comment),
-    
+    path('get-exam-comment/<int:exam>/', views.find_exam_comment),
+    path('update-result-comment/', views.update_result_comment)
 ]

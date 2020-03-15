@@ -9,7 +9,7 @@ class UserProfile():
 class Grade(models.Model):
     name = models.CharField("Class Name", max_length=50)
     number_of_students = models.IntegerField()
-
+    classteacher = models.ForeignKey(User,on_delete=models.SET_NULL, verbose_name="Class Teacher", null=True)
     def __str__(self):
         return self.name
 

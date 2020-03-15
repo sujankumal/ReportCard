@@ -14,9 +14,11 @@ class StudentResult extends Component{
             graderesults:[],
             gradesubjects:[],
             studentresults:[],
+            resultcomments:[],
             examvalue:null,
             gradevalue:null,
             studentvalue:null,
+            classteacher:false,
             studentresultclicked:true,
             gradestudentresultclicked:false
         };
@@ -176,6 +178,77 @@ class StudentResult extends Component{
                 console.log("error:"+ error);
             });
     }
+    
+    async find_result_comment(exam){
+        const header = await this.props.auth_headers();
+        await fetch(HOST+'/get-exam-comment/'+exam+'/', {
+            method: 'GET',
+            headers: header ,
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                this.setState({resultcomments: data});
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
+            });
+    }
+    async update_result_comment(e, student, exam){
+        let comment = e.target.value;
+        e.target.value = null;
+        if(!comment){
+            return
+        }
+        let header = await this.props.auth_headers();
+        header['Content-Type'] = 'application/json';
+        await fetch(HOST+'/update-result-comment/', {
+            method: 'POST',
+            headers: header ,
+            body:JSON.stringify({
+                'comment': comment,
+                'student': student,
+                'exam': exam,
+            }),
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                this.setState({resultcomments: data});
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
+            });
+        
+    }
     componentDidMount(){
         this.get_grades();
         this.teacher_get_exams();
@@ -210,6 +283,7 @@ class StudentResult extends Component{
         this.get_student_result(studentid, e.target.value);
         let studentgrade = this.state.students.find(std=>std.id==studentid).student_grade;
         this.get_subjects_by_grade(studentgrade);
+        this.find_result_comment(e.target.value);
     }
 
     student_result_clicked = () =>{
@@ -240,7 +314,13 @@ class StudentResult extends Component{
             (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
             );
     }
-
+    resultcomment=(student, exam)=>{
+        let val = this.state.resultcomments.find(
+            comment=> comment.student == student && comment.exam == exam
+        );
+        // console.log("hell", val.result_comment);
+        return (val)?val.result_comment:'';
+    }
     result_table(){
         if(this.state.gradestudentresultclicked){
             // all students of grade
@@ -256,7 +336,7 @@ class StudentResult extends Component{
                 let gradesubjects = this.state.gradesubjects;
                 let cgpa = [];
                 return (<div className="container">
-                <table className="table table-responsive table-bordered table-striped table-hover table-sm">
+                <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
                         <tr><td colSpan="10"><b>Exam Report: {exam_title}</b></td></tr>
                         <tr>
@@ -272,7 +352,11 @@ class StudentResult extends Component{
                             <td>Total</td>
                             <td>GPA</td>
                             <td>Grade</td>
-                            <td rowSpan="0"></td>
+                            <td rowSpan="0" >{
+                                (this.state.grades.find(grade=>grade.classteacher == this.props.userid))?
+                                <textarea rows="6" placeholder={this.resultcomment(student.id, exam)} className="form-control form-control-sm" onBlur={(e)=>this.update_result_comment(e, student.id, exam)}/>
+                                : this.resultcomment(student.id, exam)
+                            }</td>
                         </tr>
                         {
                             (results.length>0)?results.map((result,index)=>{
@@ -290,13 +374,24 @@ class StudentResult extends Component{
                                     <td>{total}</td>
                                     <td>{gpa.gpa}</td>
                                     <td>{gpa.grade}</td>
+
                                 </tr>
                                 }
                                 ):null          
                         }
                     </tbody>
                     <tfoot>
-                    <tr colSpan="0"><th>GPA: {(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th></tr>
+                    <tr><td colSpan="5"></td><th colSpan="2">GPA: {(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th><td></td></tr>
+                    <tr className="table-borderless">
+                        <td colSpan="2" ></td>
+                        <td colSpan="3" rowSpan="3">
+                            <b className="signature">Class Teacher</b>
+                        </td>
+                        <td colSpan="3" rowSpan="3">
+                            <b className="signature">Principal</b>
+                        </td>
+                    </tr>
+                    
                     </tfoot>
                 </table>
                 </div>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { toast, Slide } from 'react-toastify';
 import {HOST} from './constants';
-
+import {calculategrade} from './calculategrade';
 class StudentResult extends Component{
 
     constructor(props){
@@ -148,7 +148,7 @@ class StudentResult extends Component{
 
     async get_subjects_by_grade(grade){
         const header = await this.props.auth_headers();
-        await fetch(HOST+'/teachers-view-subjects-grade/'+grade+'/', {
+        await fetch(HOST+'/get-subjects-grade/'+grade+'/', {
             method: 'GET',
             headers: header ,
             })
@@ -254,12 +254,11 @@ class StudentResult extends Component{
                 let student = students.find(std => std.id == studentselected);
                 let results = this.state.studentresults;
                 let gradesubjects = this.state.gradesubjects;
+                let cgpa = [];
                 return (<div className="container">
                 <table className="table table-responsive table-bordered table-striped table-hover table-sm">
-                    <thead>
-                        <tr><th colSpan="0" className="text-center">{exam_title}</th></tr>
-                    </thead>
                     <tbody>
+                        <tr><td colSpan="10"><b>Exam Report: {exam_title}</b></td></tr>
                         <tr>
                             <td colSpan="5">Name: {student.student_name}</td>
                             <td colSpan="2">Class: {this.state.grades.find(grade=>grade.id == student.student_grade).name}</td>
@@ -280,6 +279,8 @@ class StudentResult extends Component{
                                 let theory = Math.round(0.6*parseFloat(result.mark));
                                 let practical = Math.round( 0.4*parseFloat(result.cas));
                                 let total = theory +practical;
+                                let gpa = calculategrade(total);
+                                cgpa.push(gpa.gpa);
                                 return <tr key={index}>
                                     <td>{index+1}</td>
                                     {/* Correct here and in home class mark display map */}
@@ -287,11 +288,16 @@ class StudentResult extends Component{
                                     <td>{theory}</td>
                                     <td>{practical}</td>
                                     <td>{total}</td>
+                                    <td>{gpa.gpa}</td>
+                                    <td>{gpa.grade}</td>
                                 </tr>
                                 }
                                 ):null          
                         }
                     </tbody>
+                    <tfoot>
+                    <tr colSpan="0"><th>GPA: {(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th></tr>
+                    </tfoot>
                 </table>
                 </div>
                 );

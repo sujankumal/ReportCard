@@ -116,6 +116,14 @@ def teachers_view_subject_by_grade(request, grade):
     serialized_subjects = SubjectSerializer(subjects, many=True)
     return Response(serialized_subjects.data)
 
+
+@api_view(['GET'])
+def get_subjects_by_grade(request, grade):
+    subjects = Subject.objects.filter(grade = grade)
+    serialized_subjects = SubjectSerializer(subjects, many=True)
+    return Response(serialized_subjects.data)
+
+
 @api_view(['GET'])
 def teachers_view_student_by_subject(request, subject):
     students = list(set(querystudent["student"] for querystudent in StudentSubject.objects.filter(subject = subject).values('student')))

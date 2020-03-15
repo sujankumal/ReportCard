@@ -279,10 +279,12 @@ class StudentResult extends Component{
             examvalue: e.target.value,
             studentresults:[],
         });
-        let studentid =  this.state.studentvalue;
-        this.get_student_result(studentid, e.target.value);
-        let studentgrade = this.state.students.find(std=>std.id==studentid).student_grade;
-        this.get_subjects_by_grade(studentgrade);
+        if(this.state.studentresultclicked){
+            let studentid =  this.state.studentvalue;
+            this.get_student_result(studentid, e.target.value);
+            let studentgrade = this.state.students.find(std=>std.id==studentid).student_grade;
+            this.get_subjects_by_grade(studentgrade);
+        }
         this.find_result_comment(e.target.value);
     }
 
@@ -321,9 +323,76 @@ class StudentResult extends Component{
         // console.log("hell", val.result_comment);
         return (val)?val.result_comment:'';
     }
+
+    get_student_result_calledbyall(student, exam){
+        const header = this.props.auth_headers();
+        let payload = [];
+        fetch(HOST+'/get-student-result/'+student+'/'+exam+'/', {
+            method: 'GET',
+            headers: header ,
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                payload = data;
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
+            });
+            return payload;
+    }
+
+    get_subjects_by_grade_calledbyall(grade){
+        const header = this.props.auth_headers();
+        const payload = [];
+        fetch(HOST+'/get-subjects-grade/'+grade+'/', {
+            method: 'GET',
+            headers: header ,
+            })
+            .then(res => {
+                if(res.status == 400){
+                    toast.error('Bad Request');
+                    return
+                }
+                if(res.status == 401){
+                    toast.error('Unauthorized');
+                    return
+                }
+                if(res.status == 403){
+                    toast.error('Forbidden');
+                    return
+                }
+                console.log(res);
+                return res.json();
+            })
+            .then((data) => {
+                console.log(data);
+                payload = data;
+            }).catch(function(error) {
+                toast.error("Something went Wrong!");
+                console.log("error:"+ error);
+            });
+            return payload;
+    }
     result_table(){
         if(this.state.gradestudentresultclicked){
             // all students of grade
+            
         }else{
             // single student
             let exam = this.state.examvalue;
@@ -457,7 +526,7 @@ class StudentResult extends Component{
 
                     {(this.state.gradestudentresultclicked )?grade_select:null}
                     {(this.state.gradestudentresultclicked && this.state.gradevalue)?exam_select:null}
-                    {(this.state.gradestudentresultclicked && this.state.gradevalue && this.state.examvalue)?student_select:null}
+                    {/* {(this.state.gradestudentresultclicked && this.state.gradevalue && this.state.examvalue)?student_select:null} */}
                     {(this.state.studentresultclicked)?student_select:null}
                     {(this.state.studentresultclicked && this.state.studentvalue)?exam_select:null}
                     

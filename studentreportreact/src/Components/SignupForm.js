@@ -57,7 +57,7 @@ class SignupForm extends React.Component {
               />
               </div>
               <div className="form-group">
-              <input type="submit" value="Sign Up" className="btn float-right btn-outline-light"/>
+              <input type="submit" value="Sign Up" className="btn float-right btn-outline-dark"/>
             </div>
          </form>
          </div>

@@ -9,6 +9,13 @@ function Welcome(){
                        <h3> Welcome</h3>
                         </div>
                         <div className="card-body">
+
+                        </div>
+
+                        <div className="card-footer">
+                            <div className="d-flex justify-content-center">
+                                Please login to continue
+                            </div>
                         </div>
                     </div>
                 </div>

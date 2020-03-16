@@ -546,19 +546,19 @@ class Home extends Component {
             );
     }
     render(){
-        let subject_select = <td className="input-group col-md-3">
-                            <label className="form-control-sm">Subject</label>
-                            <select onChange={(e)=>this.subject_selected(e)} ref={this.subjectselectRef}  className="form-control form-control-sm" defaultValue="none">
-                                <option value="none" disabled hidden>Select an Option </option> 
-                                {
-                                this.state.subjects.map((items, key) => 
-                                <option key={key} value={items.id}>{items.name}</option>
-                                )}
-                            </select>
-                        </td>
+        let subject_select = <li className="btn-group mx-2">
+<                   span className="mx-2">Subject</span>
+                    <select onChange={(e)=>this.subject_selected(e)} ref={this.subjectselectRef}  className="form-control form-control-sm" defaultValue="none">
+                        <option value="none" disabled hidden>Select an Option </option> 
+                        {
+                        this.state.subjects.map((items, key) => 
+                        <option key={key} value={items.id}>{items.name}</option>
+                        )}
+                    </select>
+                </li>
 
-        let student_select = <td className="input-group col-md-3">
-                <label className="form-control-sm">Student</label>
+        let student_select = <li className="btn-group mx-2">
+                <span className="mx-2">Student</span>
                 <select onChange={(e)=>this.student_selected(e)} ref={this.studentselectRef}  className="form-control form-control-sm" defaultValue="none">
                     <option value="none" disabled hidden>Select an Option </option> 
                     {
@@ -566,10 +566,10 @@ class Home extends Component {
                     <option key={key} value={items.id}>{items.student_name}</option>
                     )}
                 </select>
-                </td>
-        let result_form = <div className="row">
+                </li>
+        let result_form = 
             <div className="container">
-                <table className="table table-responsive table-striped table-hover table-sm">
+                <table className="table table-bordered table-striped table-hover table-sm">
                     <thead>
                         <tr><th>SN</th><th>Student</th><th>Theory</th><th>CAS</th><th>60% of Theory</th><th>40% of CAS</th><th>Total</th></tr>
                     </thead>
@@ -589,11 +589,10 @@ class Home extends Component {
                     </tbody>
                 </table>
             </div>
-            </div>
         
         let class_marks_diaplay = 
             <div className="container ">
-                <table className="table table-responsive table-bordered table-striped table-hover table-sm">
+                <table className="table table-bordered table-striped table-hover table-sm">
                 <caption>Terminal assess</caption>
                     <thead>
                         <tr>
@@ -626,7 +625,7 @@ class Home extends Component {
                         )}
                     </tbody>
                 </table>
-                <table className="table table-responsive table-bordered table-striped table-hover table-sm">
+                <table className="table table-bordered table-striped table-hover table-sm">
                 <caption>CAS assess</caption>
                     <thead>
                         <tr>
@@ -657,25 +656,27 @@ class Home extends Component {
         return(
             <div className="container">
                 <div className="container">
-                <nav className="navbar navbar-expand-md navbar-light bg-light">
-                    <table className="table table-sm">
-                    <tbody>
-                    <tr className="navbar-nav form-group">
-                        <td className="btn-group" >
-                            <button type="button" className="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <nav className="navbar navbar-expand-md navbar-light bg-light my-2">
+                    <div className="navbar-brand btn-group">
+                        <button type="button" className="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {
-                                    (this.state.inputresultclicked)? 'Input Result':(this.state.studnetresultclicked)?'Student Marks':(this.state.classmarksclicked)?'Class Marks':'Menu'
+                                    (this.state.inputresultclicked)? 'Input Result ':(this.state.studnetresultclicked)?'Student Marks ':(this.state.classmarksclicked)?'Class Marks ':'Menu '
                                 }
-                            </button>
-                            <div className="dropdown-menu">
-                                <button className="dropdown-item"  onClick={this.input_result_clicked}>Input result</button>
-                                <button className="dropdown-item" onClick={this.student_result_clicked}>Student result</button>
-                                <button className="dropdown-item" onClick={this.class_marks_clicked}>Class marks</button>
-                            </div>
-                        </td>
-                    
-                        <td className="input-group col-md-3">
-                            <label className="form-control-sm">Grade</label>
+                        </button>
+                        <div className="dropdown-menu">
+                            <button className="dropdown-item"  onClick={this.input_result_clicked}>Input result</button>
+                            <button className="dropdown-item" onClick={this.student_result_clicked}>Student result</button>
+                            <button className="dropdown-item" onClick={this.class_marks_clicked}>Class marks</button>
+                        </div>
+                    </div>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText1" aria-controls="navbarText1" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarText1">
+                        <ul className="navbar-nav mr-auto">
+                                
+                        <li className="btn-group mx-2">
+                            <span className="mx-2">Grade</span>
                             <select onChange={(e)=>this.grade_selected(e)} ref={this.gradeselectRef} className="form-control form-control-sm" defaultValue="none">
                                 <option value="none" disabled hidden>Select an Option </option> 
                                 {
@@ -683,9 +684,9 @@ class Home extends Component {
                                 <option key={key} value={items.id}>{items.name}</option>
                                 )}
                             </select>
-                        </td>
-                        <td className="input-group col-md-3">
-                            <label className="form-control-sm">Exam</label>
+                        </li>
+                        <li className="btn-group mx-2">
+                            <span className="mx-2">Exam</span>
                             <select onChange={(e)=>this.exam_selected(e)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
                                 <option value="none" disabled hidden>Select an Option </option> 
                                 {
@@ -693,12 +694,11 @@ class Home extends Component {
                                 <option key={key} value={items.id}>{items.name}</option>
                                 )}
                             </select>
-                        </td>
+                        </li>
                         {(this.state.examvalue)? (this.state.inputresultclicked)?subject_select:(this.state.studnetresultclicked)?student_select:null:null}
                         
-                    </tr>
-                    </tbody>
-                    </table>    
+                    </ul>
+                    </div>    
                 </nav>
                 </div>
                 {(this.state.inputresultclicked)? (this.state.subjectvalue)?result_form:null:(this.state.classmarksclicked && this.state.subjects.length != 0)?class_marks_diaplay:null}

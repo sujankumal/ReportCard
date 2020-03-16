@@ -20,7 +20,8 @@ class StudentResult extends Component{
             studentvalue:null,
             classteacher:false,
             studentresultclicked:true,
-            gradestudentresultclicked:false
+            gradestudentresultclicked:false,
+            allstudentsresultprocessisrunning:false,
         };
         this.gradeselectRef = React.createRef();
         this.examselectRef = React.createRef();
@@ -278,6 +279,7 @@ class StudentResult extends Component{
         this.setState({
             examvalue: e.target.value,
             studentresults:[],
+            allstudentsresultprocessisrunning:false,
         });
         if(this.state.studentresultclicked){
             let studentid =  this.state.studentvalue;
@@ -324,10 +326,10 @@ class StudentResult extends Component{
         return (val)?val.result_comment:'';
     }
 
-    get_student_result_calledbyall(student, exam){
-        const header = this.props.auth_headers();
-        let payload = [];
-        fetch(HOST+'/get-student-result/'+student+'/'+exam+'/', {
+    async get_student_result_calledbyall(student, exam, index){
+        const header =await this.props.auth_headers();
+        // let payload = [];
+        await fetch(HOST+'/get-student-result/'+student+'/'+exam+'/', {
             method: 'GET',
             headers: header ,
             })
@@ -349,18 +351,21 @@ class StudentResult extends Component{
             })
             .then((data) => {
                 console.log(data);
-                payload = data;
+                // payload = data;
+                this.setState({
+                    [index]:data,
+                });
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
                 console.log("error:"+ error);
             });
-            return payload;
+            // return payload;
     }
 
-    get_subjects_by_grade_calledbyall(grade){
-        const header = this.props.auth_headers();
-        const payload = [];
-        fetch(HOST+'/get-subjects-grade/'+grade+'/', {
+    async get_subjects_by_grade_calledbyall(grade, index){
+        const header =await this.props.auth_headers();
+        // const payload = [];
+        await fetch(HOST+'/get-subjects-grade/'+grade+'/', {
             method: 'GET',
             headers: header ,
             })
@@ -382,17 +387,102 @@ class StudentResult extends Component{
             })
             .then((data) => {
                 console.log(data);
-                payload = data;
+                // payload = data;
+                this.setState({
+                    [index]:data,
+                });
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
                 console.log("error:"+ error);
             });
-            return payload;
+            // return payload;
     }
     result_table(){
         if(this.state.gradestudentresultclicked){
             // all students of grade
-            
+            let exam = this.state.examvalue;
+            if(exam && !this.state.allstudentsresultprocessisrunning){
+                this.setState({
+                    allstudentsresultprocessisrunning:true,
+                });
+                let exam_title = this.state.exams.find(item=> item.id == exam).name;
+                let students = this.state.students;
+                // let studentselected = this.state.studentvalue;
+                // let student = students.find(std => std.id == studentselected);
+                this.get_subjects_by_grade(this.state.gradevalue);
+                let payload = [];
+                let results = [];
+                students.forEach((student, index)=>{ 
+                    this.get_student_result_calledbyall(student.id, exam, 'results'+index );
+                    // this.get_subjects_by_grade_calledbyall()
+                    // results[index] = [];
+                    results[index] = this.state['student'+index];
+                    let gradesubjects = this.state.gradesubjects;
+                    let cgpa = [];
+                    let data = <div className="container" key={index}>
+                    <table className="table table-bordered table-striped table-hover table-sm">
+                    <tbody>
+                        <tr><td colSpan="10"><b>Exam Report: {exam_title}</b></td></tr>
+                        <tr>
+                            <td colSpan="5">Name: {student.student_name}</td>
+                            <td colSpan="2">Class: {this.state.grades.find(grade=>grade.id == student.student_grade).name}</td>
+                            <td>Class Teacher Remarks</td>
+                        </tr>
+                        <tr>
+                            <td>SN</td>
+                            <td>Subjects</td>
+                            <td>Theory</td>
+                            <td>Practical</td>
+                            <td>Total</td>
+                            <td>GPA</td>
+                            <td>Grade</td>
+                            <td rowSpan="0" >{
+                                (this.state.grades.find(grade=>grade.classteacher == this.props.userid))?
+                                <textarea rows="6" placeholder={this.resultcomment(student.id, exam)} className="form-control form-control-sm" onBlur={(e)=>this.update_result_comment(e, student.id, exam)}/>
+                                : this.resultcomment(student.id, exam)
+                            }</td>
+                        </tr>
+                        {
+                            (results[index] && results[index].length>0)?results[index].map((result,ind)=>{
+                                let theory = Math.round(0.6*parseFloat(result.mark));
+                                let practical = Math.round( 0.4*parseFloat(result.cas));
+                                let total = theory +practical;
+                                let gpa = calculategrade(total);
+                                cgpa.push(gpa.gpa);
+                                return <tr key={ind}>
+                                    <td>{ind+1}</td>
+                                    {/* Correct here and in home class mark display map */}
+                                    <td>{gradesubjects.map(subject=> (subject.id == result.subject)?subject.name:null)}</td>
+                                    <td>{theory}</td>
+                                    <td>{practical}</td>
+                                    <td>{total}</td>
+                                    <td>{gpa.gpa}</td>
+                                    <td>{gpa.grade}</td>
+
+                                </tr>
+                                }
+                                ):null          
+                            }
+                        </tbody>
+                        <tfoot>
+                        <tr><td colSpan="5"></td><th colSpan="2">GPA: {(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th><td></td></tr>
+                        <tr className="table-borderless">
+                            <td colSpan="2" ></td>
+                            <td colSpan="3" rowSpan="3">
+                                <b className="signature">Class Teacher</b>
+                            </td>
+                            <td colSpan="3" rowSpan="3">
+                                <b className="signature">Principal</b>
+                            </td>
+                        </tr>
+                        
+                        </tfoot>
+                    </table>
+                    </div>
+                  payload.push(data);
+                });
+                return payload;
+            }
         }else{
             // single student
             let exam = this.state.examvalue;
@@ -453,10 +543,10 @@ class StudentResult extends Component{
                     <tr><td colSpan="5"></td><th colSpan="2">GPA: {(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th><td></td></tr>
                     <tr className="table-borderless">
                         <td colSpan="2" ></td>
-                        <td colSpan="3" rowSpan="3">
+                        <td colSpan="3">
                             <b className="signature">Class Teacher</b>
                         </td>
-                        <td colSpan="3" rowSpan="3">
+                        <td colSpan="3">
                             <b className="signature">Principal</b>
                         </td>
                     </tr>
@@ -470,8 +560,8 @@ class StudentResult extends Component{
         
     }
     render(){
-        let grade_select = <td className="input-group col-md-3">
-                <label className="form-control-sm">Grade</label>
+        let grade_select = <li className="btn-group mx-2">
+                <span className="mx-2">Grade</span>
                 <select onChange={(e)=>this.grade_selected(e)} ref={this.gradeselectRef} className="form-control form-control-sm" defaultValue="none">
                     <option value="none" disabled hidden>Select an Option </option> 
                     {
@@ -479,11 +569,11 @@ class StudentResult extends Component{
                     <option key={key} value={items.id}>{items.name}</option>
                     )}
                 </select>
-                </td>
+                </li>
                         
 
-        let student_select = <td className="input-group col-md-3">
-                <label className="form-control-sm">Student</label>
+        let student_select = <li className="btn-group  mx-2">
+                <span className="mx-2">Student</span>
                 <select onChange={(e)=>this.student_selected(e)} ref={this.studentselectRef}  className="form-control form-control-sm" defaultValue="none">
                     <option value="none" disabled hidden>Select an Option </option> 
                     {
@@ -491,9 +581,9 @@ class StudentResult extends Component{
                     <option key={key} value={items.id}>{items.student_name}</option>
                     )}
                 </select>
-                </td>
-        let exam_select = <td className="input-group col-md-3">
-                <label className="form-control-sm">Exam</label>
+                </li>
+        let exam_select = <li className="btn-group mx-2">
+                <span className="mx-2">Exam</span>
                 <select onChange={(e)=>this.exam_selected(e)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
                     <option value="none" disabled hidden>Select an Option </option> 
                     {
@@ -501,20 +591,17 @@ class StudentResult extends Component{
                     <option key={key} value={items.id}>{items.name}</option>
                     )}
                 </select>
-                </td>
+                </li>
     
         
         return (
             <div className="container">
                 <div className="container">
-                <nav className="navbar navbar-expand-md navbar-light bg-light">
-                <table className="table table-sm">
-                <tbody>
-                <tr className="navbar-nav form-group">
-                    <td className="btn-group" >
+                <nav className="navbar navbar-expand-md navbar-light bg-light my-2">
+                    <div className="navbar-brand btn-group">
                         <button type="button" className="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {
-                                (this.state.studentresultclicked)?'Student result':(this.state.gradestudentresultclicked)?'Grade all student result':'Menu'
+                                (this.state.studentresultclicked)?'Student result ':(this.state.gradestudentresultclicked)?'Grade all students result ':'Menu '
                             }
                         </button>
                         <div className="dropdown-menu">
@@ -522,19 +609,22 @@ class StudentResult extends Component{
                             <button className="dropdown-item" onClick={this.grade_student_result_clicked}>Grade all student result</button>
                             <button className="dropdown-item" onClick={this.props.show_home}>Go to result input form</button>
                         </div>
-                    </td>
-
-                    {(this.state.gradestudentresultclicked )?grade_select:null}
-                    {(this.state.gradestudentresultclicked && this.state.gradevalue)?exam_select:null}
-                    {/* {(this.state.gradestudentresultclicked && this.state.gradevalue && this.state.examvalue)?student_select:null} */}
-                    {(this.state.studentresultclicked)?student_select:null}
-                    {(this.state.studentresultclicked && this.state.studentvalue)?exam_select:null}
-                    
-                </tr>
-                </tbody>
-                </table>    
-            </nav>
+                    </div>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText1" aria-controls="navbarText1" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarText1">
+                        <ul className="navbar-nav mr-auto">
+                            {(this.state.gradestudentresultclicked )?grade_select:null}
+                            {(this.state.gradestudentresultclicked && this.state.gradevalue)?exam_select:null}
+                            {/* {(this.state.gradestudentresultclicked && this.state.gradevalue && this.state.examvalue)?student_select:null} */}
+                            {(this.state.studentresultclicked)?student_select:null}
+                            {(this.state.studentresultclicked && this.state.studentvalue)?exam_select:null}
+                        </ul>
+                    </div>    
+                </nav>
             </div>
+            { console.log('com: ', this.state.studentresultclicked)}
             {(this.state.studentresultclicked || this.state.gradestudentresultclicked)?this.result_table():null}
         </div>
             )

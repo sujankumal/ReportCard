@@ -59,7 +59,7 @@ class LoginForm extends React.Component {
               <input type="checkbox"/>Remember Me
             </div>
             <div className="form-group">
-              <input type="submit" value="Login" className="btn float-right btn-outline-light"/>
+              <input type="submit" value="Login" className="btn float-right btn-outline-dark"/>
             </div>
           </form>
         </div>

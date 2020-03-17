@@ -660,13 +660,13 @@ class Home extends Component {
                     <div className="navbar-brand btn-group">
                         <button type="button" className="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {
-                                    (this.state.inputresultclicked)? 'Input Result ':(this.state.studnetresultclicked)?'Student Marks ':(this.state.classmarksclicked)?'Class Marks ':'Menu '
+                                    (this.state.inputresultclicked)? 'Input marks ':(this.state.studnetresultclicked)?'Student marks ':(this.state.classmarksclicked)?'Class marks ':'Menu '
                                 }
                         </button>
                         <div className="dropdown-menu">
-                            <button className="dropdown-item"  onClick={this.input_result_clicked}>Input result</button>
-                            <button className="dropdown-item" onClick={this.student_result_clicked}>Student result</button>
+                            <button className="dropdown-item"  onClick={this.input_result_clicked}>Input marks</button>
                             <button className="dropdown-item" onClick={this.class_marks_clicked}>Class marks</button>
+                            <button className="dropdown-item" onClick={this.student_result_clicked}>Result</button>
                         </div>
                     </div>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText1" aria-controls="navbarText1" aria-expanded="false" aria-label="Toggle navigation">
@@ -695,7 +695,7 @@ class Home extends Component {
                                 )}
                             </select>
                         </li>
-                        {(this.state.examvalue)? (this.state.inputresultclicked)?subject_select:(this.state.studnetresultclicked)?student_select:null:null}
+                        {(this.state.examvalue)? (this.state.inputresultclicked && this.state.gradevalue)?subject_select:(this.state.studnetresultclicked)?student_select:null:null}
                         
                     </ul>
                     </div>    

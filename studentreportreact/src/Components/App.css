@@ -60,6 +60,12 @@ margin-bottom: auto;
 width: 400px;
 background-color: #fff !important;
 }
+.welcome{
+  background-color: #fff !important;
+  margin-top: auto;
+  margin-bottom: auto;
+  
+}
 .navbar-dark{
   box-shadow: inset 0px 3px 0px #900;
 }

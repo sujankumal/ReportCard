@@ -25,6 +25,8 @@ class StudentResult extends Component{
             studentresultclicked:true,
             gradestudentresultclicked:false,
             allstudentsresultprocessisrunning:false,
+            finalreportclicked:false,
+            gradestudentfinalreportclicked:false,
         };
         this.gradeselectRef = React.createRef();
         this.examselectRef = React.createRef();
@@ -331,7 +333,9 @@ class StudentResult extends Component{
             studentresultclicked:true,
             gradevalue:null,
             studentvalue:null,
-            gradestudentresultclicked:false
+            gradestudentresultclicked:false,
+            finalreportclicked:false,
+            gradestudentfinalreportclicked:false,
         });
         console.log(
             (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
@@ -346,6 +350,8 @@ class StudentResult extends Component{
             examvalue:null,
             studentresultclicked:false,
             gradestudentresultclicked:true,
+            finalreportclicked:false,
+            gradestudentfinalreportclicked:false,
         });
         console.log(
             (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
@@ -353,6 +359,52 @@ class StudentResult extends Component{
             (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
             );
     }
+    final_report_clicked=()=>{
+        this.setState({
+            // exams:[],
+            // students:[],
+            // grades:[],
+            gradestudents:[],
+            graderesults:[],
+            gradesubjects:[],
+            studentresults:[],
+            resultcomments:[],
+            examvalue:null,
+            gradevalue:null,
+            studentvalue:null,
+            classteacher:false,
+            studentresultclicked:false,
+            gradestudentresultclicked:false,
+            allstudentsresultprocessisrunning:false,
+            finalreportclicked:true,
+            gradestudentfinalreportclicked:false,
+        });
+        console.log("Final report");
+    }
+    grade_student_final_report_clicked=()=>{
+        this.setState({
+            // exams:[],
+            // students:[],
+            // grades:[],
+            gradestudents:[],
+            graderesults:[],
+            gradesubjects:[],
+            studentresults:[],
+            resultcomments:[],
+            examvalue:null,
+            gradevalue:null,
+            studentvalue:null,
+            classteacher:false,
+            studentresultclicked:false,
+            gradestudentresultclicked:false,
+            allstudentsresultprocessisrunning:false,
+            finalreportclicked:false,
+            gradestudentfinalreportclicked:true,
+            
+        });
+        console.log("all student Final report");
+    }
+
     resultcomment=(student, exam)=>{
         let val = this.state.resultcomments.find(
             comment=> comment.student == student && comment.exam == exam
@@ -630,13 +682,15 @@ class StudentResult extends Component{
                     <div className="navbar-brand btn-group">
                         <button type="button" className="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {
-                                (this.state.studentresultclicked)?'Student result ':(this.state.gradestudentresultclicked)?'Grade all students result ':'Menu '
+                                (this.state.studentresultclicked)?'Student result ':(this.state.gradestudentresultclicked)?'Grade all students result ':(this.state.finalreportclicked)?'Final Report ':(this.state.gradestudentfinalreportclicked)?'Grade all students Final report ':'Menu '
                             }
                         </button>
                         <div className="dropdown-menu">
                             <button className="dropdown-item" onClick={this.student_result_clicked}>Student result</button>
                             <button className="dropdown-item" onClick={this.grade_student_result_clicked}>Grade all student result</button>
-                            <button className="dropdown-item" onClick={this.props.show_home}>Go to result input form</button>
+                            <button className="dropdown-item" onClick={this.final_report_clicked}>Final report</button>
+                            <button className="dropdown-item" onClick={this.grade_student_final_report_clicked}>Grade all students Final report</button>
+                            <button className="dropdown-item" onClick={this.props.show_home}>Go to marks input form</button>
                         </div>
                     </div>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText1" aria-controls="navbarText1" aria-expanded="false" aria-label="Toggle navigation">

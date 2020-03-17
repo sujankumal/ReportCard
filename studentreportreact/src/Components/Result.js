@@ -319,10 +319,22 @@ class StudentResult extends Component{
             let studentgrade = this.state.students.find(std=>std.id==studentid).student_grade;
             this.get_subjects_by_grade(studentgrade);
         }
-        if(this.state.gradestudentresultclicked){
-            this.state.students.forEach((student, index)=>{ 
-                this.get_student_result_calledbyall(student.id, e.target.value, 'results'+index );
+        else if(this.state.gradestudentresultclicked){
+            // here filter students by grade.
+            let current_grade = this.state.gradevalue;
+            this.state.students.forEach((student, index)=>{
+                if(student.student_grade == current_grade){ 
+                    this.get_student_result_calledbyall(student.id, e.target.value, 'results'+index );
+                }
             });
+        }
+        else if(this.state.finalreportclicked){
+                
+            console.log("exam selected: st final report")
+        }
+        else if(this.state.gradestudentfinalreportclicked){
+            
+            console.log("exam selected: grade all  st final report")
         }
         this.find_result_comment(e.target.value);
     }
@@ -493,7 +505,10 @@ class StudentResult extends Component{
                 let students = this.state.students;
                 let payload = [];
                 let results = [];
-                students.forEach((student, index)=>{ 
+                let current_grade = this.state.gradevalue;
+                students.forEach((student, index)=>{
+                    if(student.student_grade == current_grade){
+                        
                     const stateindex = 'results'+index;
                     results[index] = this.state[stateindex];
                     let cgpa = [];
@@ -543,7 +558,8 @@ class StudentResult extends Component{
                         </tfoot>
                     </table>
                     </div>
-                  payload.push(data);
+                    payload.push(data);
+                    }
                 });
                 return payload;
             }
@@ -623,6 +639,18 @@ class StudentResult extends Component{
         }
         
     }
+    student_report_table(){
+        let exam = this.state.examvalue;
+        if(exam){
+            return <div>student_report_table</div>
+        }
+    }
+    grade_student_report_table(){
+        let exam = this.state.examvalue;
+        if(exam){
+            return <div> grade_student_report_table</div>
+        }
+    }
     render(){
         let grade_select = <li className="btn-group mx-2">
                 <span className="mx-2">Grade</span>
@@ -673,7 +701,38 @@ class StudentResult extends Component{
                     )}
                 </select>
                 </li>
-    
+        let exam_select_multi1 = <li className="btn-group mx-2">
+        <span className="mx-2">Exam</span>
+        <select onChange={(e)=>this.exam_selected(e)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
+            <option value="none" disabled hidden>Select an Option </option> 
+            {
+            this.state.exams.map((items, key) => 
+            <option key={key} value={items.id}>{items.name}</option>
+            )}
+        </select>
+        </li>
+        
+        let exam_select2 = <li className="btn-group mx-2">
+        <span className="mx-2">Exam</span>
+        <select onChange={(e)=>this.exam_selected(e)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
+            <option value="none" disabled hidden>Select an Option </option> 
+            {
+            this.state.exams.map((items, key) => 
+            <option key={key} value={items.id}>{items.name}</option>
+            )}
+        </select>
+        </li>
+        let exam_select3 = <li className="btn-group mx-2">
+        <span className="mx-2">Exam</span>
+        <select onChange={(e)=>this.exam_selected(e)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
+            <option value="none" disabled hidden>Select an Option </option> 
+            {
+            this.state.exams.map((items, key) => 
+            <option key={key} value={items.id}>{items.name}</option>
+            )}
+        </select>
+        </li>
+
         
         return (
             <div className="container">
@@ -698,17 +757,21 @@ class StudentResult extends Component{
                     </button>
                     <div className="collapse navbar-collapse" id="navbarText1">
                         <ul className="navbar-nav mr-auto">
-                            {(this.state.gradestudentresultclicked )?grade_select:null}
+                            {(this.state.gradestudentresultclicked || this.state.gradestudentfinalreportclicked)?grade_select:null}
                             {(this.state.gradestudentresultclicked && this.state.gradevalue)?exam_select:null}
+                            {(this.state.gradestudentfinalreportclicked && this.state.gradevalue)?exam_select:null}
                             {/* {(this.state.gradestudentresultclicked && this.state.gradevalue && this.state.examvalue)?student_select:null} */}
-                            {(this.state.studentresultclicked)?student_select:null}
+                            {(this.state.studentresultclicked || this.state.finalreportclicked)?student_select:null}
                             {(this.state.studentresultclicked && this.state.studentvalue)?exam_select:null}
+                            {(this.state.finalreportclicked && this.state.studentvalue)?exam_select:null}
                         </ul>
                     </div>    
                 </nav>
             </div>
             { console.log('com: ', this.state.studentresultclicked)}
             {(this.state.studentresultclicked || this.state.gradestudentresultclicked)?this.result_table():null}
+            {(this.state.finalreportclicked)?this.student_report_table():null}
+            {(this.state.gradestudentfinalreportclicked)?this.grade_student_report_table():null}
         </div>
             )
     }

@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { toast, Slide } from 'react-toastify';
 import {HOST} from './constants';
 import {calculategrade} from './calculategrade';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch} from '@fortawesome/free-solid-svg-icons';
+
 class StudentResult extends Component{
 
     constructor(props){
@@ -26,6 +29,8 @@ class StudentResult extends Component{
         this.gradeselectRef = React.createRef();
         this.examselectRef = React.createRef();
         this.studentselectRef = React.createRef();
+        this.filterstudentsinputid = React.createRef();
+        this.filterstudentslist = React.createRef();
     }
 
     async get_grades(){
@@ -268,14 +273,36 @@ class StudentResult extends Component{
 
     student_selected(e){
         this.setState({
-            studentvalue: e.target.value,
+            studentvalue: e.target.attributes.value.value,
             studentresults:[],
         });
+        this.filterstudentsinputid.current.placeholder = this.state.students.find(std=>std.id == e.target.attributes.value.value).student_name;
         console.log(
-            // (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
             (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-            // (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
             );
+    }
+    filterStudents(e){
+        let filter = e.target.value.toUpperCase();
+        this.state.students.forEach(student=>{
+                if (student.student_name.toUpperCase().indexOf(filter) > -1) {
+                    this.filterstudentslist.current.childNodes.forEach((tr)=>
+                        {
+                            if(student.id == tr.attributes.value.value){
+                                tr.style.display = ""
+                            }
+                        }
+                      );
+                  } else {
+                      this.filterstudentslist.current.childNodes.forEach((tr)=>
+                        {
+                            if(student.id == tr.attributes.value.value){
+                                tr.style.display = "none"
+                            }
+                        } 
+                      );
+                  }
+            }
+        );
     }
 
     exam_selected(e){
@@ -559,13 +586,30 @@ class StudentResult extends Component{
 
         let student_select = <li className="btn-group  mx-2">
                 <span className="mx-2">Student</span>
-                <select onChange={(e)=>this.student_selected(e)} ref={this.studentselectRef}  className="form-control form-control-sm" defaultValue="none">
-                    <option value="none" disabled hidden>Select an Option </option> 
+                {/* <select onChange={(e)=>this.student_selected(e)} ref={this.studentselectRef}  className="form-control form-control-sm" defaultValue="none">
+                    <option value="none" disabled hidden>Select an Option</option> 
+                    
                     {
                     this.state.students.map((items, key) => 
                     <option key={key} value={items.id}>{items.student_name}</option>
                     )}
-                </select>
+                </select> */}
+                <div className="form-inline input-group dropdown mx-2">
+                        <input type="text" className="form-control dropdown-toggle form-control-sm" 
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Search Student"
+                        onKeyUp={(e)=>this.filterStudents(e)} ref={this.filterstudentsinputid} />
+                        <span className="input-group-text" disabled><FontAwesomeIcon icon={faSearch} /></span>
+                        <div  className="dropdown-menu overflow-auto" style={{height: 200 + 'px'}} >
+                            <table className="table table-bordered table-striped table-hover table-sm">
+                                <thead><tr><td>Students Name</td></tr></thead>
+                                <tbody ref = {this.filterstudentslist}>{
+                                this.state.students.map((items, key) => 
+                                <tr key={key} value={items.id}><td onClick={ (e)=>this.student_selected(e)} value={items.id}>{items.student_name}</td></tr>
+                                )
+                                }</tbody>
+                            </table>
+                        </div>
+                    </div>
                 </li>
         let exam_select = <li className="btn-group mx-2">
                 <span className="mx-2">Exam</span>

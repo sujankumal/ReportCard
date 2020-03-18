@@ -17,14 +17,20 @@ class StudentResult extends Component{
             graderesults:[],
             gradesubjects:[],
             studentresults:[],
+            studentresultsmulti1:[],
+            studentresultsmulti2:[],
+            studentresultsmulti3:[],
             resultcomments:[],
             examvalue:null,
+            examvaluemulti1:null,
+            examvaluemulti2:null,
+            examvaluemulti3:null,
             gradevalue:null,
             studentvalue:null,
             classteacher:false,
             studentresultclicked:true,
             gradestudentresultclicked:false,
-            allstudentsresultprocessisrunning:false,
+            
             finalreportclicked:false,
             gradestudentfinalreportclicked:false,
         };
@@ -125,7 +131,8 @@ class StudentResult extends Component{
             });
     }
 
-    async get_student_result(student, exam){
+    async get_student_result(student, exam, exammulti){
+        
         const header = await this.props.auth_headers();
         await fetch(HOST+'/get-student-result/'+student+'/'+exam+'/', {
             method: 'GET',
@@ -149,7 +156,15 @@ class StudentResult extends Component{
             })
             .then((data) => {
                 console.log(data);
-                this.setState({studentresults:data});
+                if(exammulti == 0){
+                    this.setState({studentresults:data});
+                }else if(exammulti == 1){
+                    this.setState({studentresultsmulti1:data});
+                }else if(exammulti == 2){
+                    this.setState({studentresultsmulti2:data});
+                }else if(exammulti == 3){
+                    this.setState({studentresultsmulti3:data});
+                }
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
                 console.log("error:"+ error);
@@ -267,6 +282,9 @@ class StudentResult extends Component{
         this.setState({
             gradevalue: e.target.value,
             studentresults:[],
+            studentresultsmulti1:[],
+            studentresultsmulti2:[],
+            studentresultsmulti3:[],
         });
         if(this.state.gradestudentresultclicked){
             this.get_subjects_by_grade(e.target.value);
@@ -277,6 +295,9 @@ class StudentResult extends Component{
         this.setState({
             studentvalue: e.target.attributes.value.value,
             studentresults:[],
+            studentresultsmulti1:[],
+            studentresultsmulti2:[],
+            studentresultsmulti3:[],
         });
         this.filterstudentsinputid.current.placeholder = this.state.students.find(std=>std.id == e.target.attributes.value.value).student_name;
         console.log(
@@ -307,41 +328,57 @@ class StudentResult extends Component{
         );
     }
 
-    exam_selected(e){
-        this.setState({
-            examvalue: e.target.value,
-            studentresults:[],
-            allstudentsresultprocessisrunning:false,
-        });
-        if(this.state.studentresultclicked){
+    exam_selected(e, exammulti){
+        if(exammulti == 0){
+            this.setState({
+                examvalue: e.target.value,
+                studentresults:[],
+                
+            });
+        }else if(exammulti == 1){
+            this.setState({
+                examvaluemulti1: e.target.value,
+                studentresultsmulti1:[],
+                
+            });
+        }else if(exammulti == 2){
+            this.setState({
+                examvaluemulti2: e.target.value,
+                studentresultsmulti2:[],
+                
+            });
+        }else if(exammulti == 3){
+            this.setState({
+                examvaluemulti3: e.target.value,
+                studentresultsmulti3:[],
+                
+            });
+        } 
+        if(this.state.studentresultclicked || this.state.finalreportclicked){
             let studentid =  this.state.studentvalue;
-            this.get_student_result(studentid, e.target.value);
+            this.get_student_result(studentid, e.target.value, exammulti);
             let studentgrade = this.state.students.find(std=>std.id==studentid).student_grade;
             this.get_subjects_by_grade(studentgrade);
         }
-        else if(this.state.gradestudentresultclicked){
+        else if(this.state.gradestudentresultclicked || this.state.gradestudentfinalreportclicked){
             // here filter students by grade.
             let current_grade = this.state.gradevalue;
-            this.state.students.forEach((student, index)=>{
+            this.state.students.map((student, index)=>{
                 if(student.student_grade == current_grade){ 
-                    this.get_student_result_calledbyall(student.id, e.target.value, 'results'+index );
+                    this.get_student_result_calledbyall(student.id, e.target.value, 'results'+index+exammulti );
                 }
             });
         }
-        else if(this.state.finalreportclicked){
-                
-            console.log("exam selected: st final report")
-        }
-        else if(this.state.gradestudentfinalreportclicked){
-            
-            console.log("exam selected: grade all  st final report")
-        }
+        
         this.find_result_comment(e.target.value);
     }
 
     student_result_clicked = () =>{
         this.setState({
             examvalue:null,
+            examvaluemulti1:null,
+            examvaluemulti2:null,
+            examvaluemulti3:null,
             studentresultclicked:true,
             gradevalue:null,
             studentvalue:null,
@@ -360,6 +397,9 @@ class StudentResult extends Component{
             gradevalue:null,
             studentvalue:null,
             examvalue:null,
+            examvaluemulti1:null,
+            examvaluemulti2:null,
+            examvaluemulti3:null,
             studentresultclicked:false,
             gradestudentresultclicked:true,
             finalreportclicked:false,
@@ -380,14 +420,20 @@ class StudentResult extends Component{
             graderesults:[],
             gradesubjects:[],
             studentresults:[],
+            studentresultsmulti1:[],
+            studentresultsmulti2:[],
+            studentresultsmulti3:[],
             resultcomments:[],
             examvalue:null,
+            examvaluemulti1:null,
+            examvaluemulti2:null,
+            examvaluemulti3:null,
             gradevalue:null,
             studentvalue:null,
             classteacher:false,
             studentresultclicked:false,
             gradestudentresultclicked:false,
-            allstudentsresultprocessisrunning:false,
+            
             finalreportclicked:true,
             gradestudentfinalreportclicked:false,
         });
@@ -402,14 +448,20 @@ class StudentResult extends Component{
             graderesults:[],
             gradesubjects:[],
             studentresults:[],
+            studentresultsmulti1:[],
+            studentresultsmulti2:[],
+            studentresultsmulti3:[],
             resultcomments:[],
             examvalue:null,
+            examvaluemulti1:null,
+            examvaluemulti2:null,
+            examvaluemulti3:null,
             gradevalue:null,
             studentvalue:null,
             classteacher:false,
             studentresultclicked:false,
             gradestudentresultclicked:false,
-            allstudentsresultprocessisrunning:false,
+            
             finalreportclicked:false,
             gradestudentfinalreportclicked:true,
             
@@ -506,10 +558,10 @@ class StudentResult extends Component{
                 let payload = [];
                 let results = [];
                 let current_grade = this.state.gradevalue;
-                students.forEach((student, index)=>{
+                students.map((student, index)=>{
                     if(student.student_grade == current_grade){
                         
-                    const stateindex = 'results'+index;
+                    const stateindex = 'results'+index+0;
                     results[index] = this.state[stateindex];
                     let cgpa = [];
                     let count = 0;
@@ -673,21 +725,13 @@ class StudentResult extends Component{
                 </li>
                         
 
-        let student_select = <li className="btn-group  mx-2">
-                <span className="mx-2">Student</span>
-                {/* <select onChange={(e)=>this.student_selected(e)} ref={this.studentselectRef}  className="form-control form-control-sm" defaultValue="none">
-                    <option value="none" disabled hidden>Select an Option</option> 
-                    
-                    {
-                    this.state.students.map((items, key) => 
-                    <option key={key} value={items.id}>{items.student_name}</option>
-                    )}
-                </select> */}
-                <div className="form-inline input-group dropdown mx-2">
+        let student_select = <li className="btn-group mx-auto my-auto">
+                <span className="">Student</span>
+                <div className="form-inline input-group dropdown mx-1">
                         <input type="text" className="form-control dropdown-toggle form-control-sm" 
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Search Student"
                         onKeyUp={(e)=>this.filterStudents(e)} ref={this.filterstudentsinputid} />
-                        <span className="input-group-text" disabled><FontAwesomeIcon icon={faSearch} /></span>
+                        <span className="input-group-text form-control-sm" disabled><FontAwesomeIcon icon={faSearch} /></span>
                         <div  className="dropdown-menu overflow-auto" style={{height: 200 + 'px'}} >
                             <table className="table table-bordered table-striped table-hover table-sm">
                                 <thead><tr><td>Students Name</td></tr></thead>
@@ -700,9 +744,9 @@ class StudentResult extends Component{
                         </div>
                     </div>
                 </li>
-        let exam_select = <li className="btn-group mx-2">
+        let exam_select = <li className="btn-group mx-2" key="es0">
                 <span className="mx-2">Exam</span>
-                <select onChange={(e)=>this.exam_selected(e)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
+                <select onChange={(e)=>this.exam_selected(e, 0)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
                     <option value="none" disabled hidden>Select an Option </option> 
                     {
                     this.state.exams.map((items, key) => 
@@ -710,34 +754,34 @@ class StudentResult extends Component{
                     )}
                 </select>
                 </li>
-        let exam_select_multi1 = <li className="btn-group mx-2">
-        <span className="mx-2">Exam</span>
-        <select onChange={(e)=>this.exam_selected(e)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
+        let exam_select_multi1 = <li className="form-group mx-1" key="es1">
+        <span className="mx-1">1st Term</span>
+        <select onChange={(e)=>this.exam_selected(e, 1)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
             <option value="none" disabled hidden>Select an Option </option> 
             {
             this.state.exams.map((items, key) => 
-            <option key={key} value={items.id}>{items.name}</option>
+            (items.exam_term == '1st')?<option key={key} value={items.id}>{items.name}</option>:null
             )}
         </select>
         </li>
         
-        let exam_select2 = <li className="btn-group mx-2">
-        <span className="mx-2">Exam</span>
-        <select onChange={(e)=>this.exam_selected(e)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
+        let exam_select_multi2 = <li className="form-group mx-1" key="es2">
+        <span className="mx-1">2nd Term</span>
+        <select onChange={(e)=>this.exam_selected(e, 2)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
             <option value="none" disabled hidden>Select an Option </option> 
             {
             this.state.exams.map((items, key) => 
-            <option key={key} value={items.id}>{items.name}</option>
+            (items.exam_term == '2nd')?<option key={key} value={items.id}>{items.name}</option>:null
             )}
         </select>
         </li>
-        let exam_select3 = <li className="btn-group mx-2">
-        <span className="mx-2">Exam</span>
-        <select onChange={(e)=>this.exam_selected(e)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
+        let exam_select_multi3 = <li className="form-group mx-1" key="es3">
+        <span className="mx-1">3rd Term</span>
+        <select onChange={(e)=>this.exam_selected(e, 3)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
             <option value="none" disabled hidden>Select an Option </option> 
             {
             this.state.exams.map((items, key) => 
-            <option key={key} value={items.id}>{items.name}</option>
+            (items.exam_term == '3rd')?<option key={key} value={items.id}>{items.name}</option>:null
             )}
         </select>
         </li>
@@ -768,11 +812,10 @@ class StudentResult extends Component{
                         <ul className="navbar-nav mr-auto">
                             {(this.state.gradestudentresultclicked || this.state.gradestudentfinalreportclicked)?grade_select:null}
                             {(this.state.gradestudentresultclicked && this.state.gradevalue)?exam_select:null}
-                            {(this.state.gradestudentfinalreportclicked && this.state.gradevalue)?exam_select:null}
-                            {/* {(this.state.gradestudentresultclicked && this.state.gradevalue && this.state.examvalue)?student_select:null} */}
+                            {(this.state.gradestudentfinalreportclicked && this.state.gradevalue)?[exam_select_multi1, exam_select_multi2, exam_select_multi3]:null}
                             {(this.state.studentresultclicked || this.state.finalreportclicked)?student_select:null}
                             {(this.state.studentresultclicked && this.state.studentvalue)?exam_select:null}
-                            {(this.state.finalreportclicked && this.state.studentvalue)?exam_select:null}
+                            {(this.state.finalreportclicked && this.state.studentvalue)?[exam_select_multi1, exam_select_multi2, exam_select_multi3]:null}
                         </ul>
                     </div>    
                 </nav>

@@ -701,14 +701,52 @@ class StudentResult extends Component{
         
     }
     student_report_table(){
-        let exam = this.state.examvalue;
-        if(exam){
-            return <div>student_report_table</div>
+        let exam1 = this.state.examvaluemulti1;
+        let exam2 = this.state.examvaluemulti2;
+        let exam3 = this.state.examvaluemulti3;
+        if(exam1 && exam2 && exam3){
+            return <div className="container">
+                <div className="report">
+                    <div><h3>Progress Report</h3></div>
+                    <div className="row text-left">
+                        <div className="col-md-5" ><b className="mx-4">Name:</b></div><div className="col-md-6"><b  className="mx-4">Grade:</b></div>
+                    </div>
+                    <div className="container">
+                        <table className="table table-bordered table-sm">
+                            <tbody>
+                                <tr><td rowSpan="2">Subjects</td><td>1ST TERM</td><td>2ND TERM</td><td>3RD TERM</td><td>AVERAGE</td><td rowSpan="2">GPA</td><td rowSpan="2">GRADE</td></tr>
+                                <tr><td>20%</td><td>30%</td><td>50%</td><td>100%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-6">
+                            <table className="table table-bordered table-sm col-md-6">
+                                <tbody>
+                                    <tr><td>Grade</td><td>GPA</td></tr>
+                                    <tr><td>A+</td><td>Outstanding 4.0</td></tr>
+                                    <tr><td>A</td><td>Excellent 3.6</td></tr>
+                                    <tr><td>B+</td><td>Very Good 3.2</td></tr>
+                                    <tr><td>B</td><td>Good 2.8</td></tr>
+                                    <tr><td>C+</td><td>Satisfactory 2.4</td></tr>
+                                    <tr><td>C</td><td>Acceptable 2.0</td></tr>
+                                    <tr><td>D+</td><td>Partially Acceptable 1.6</td></tr>
+                                    <tr><td>D</td><td>Insufficient 1.2</td></tr>
+                                    <tr><td>E</td><td>Very Insufficient 0.8</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="col-md-6">GPA:</div>
+                    </div>
+                </div>
+            </div>
         }
     }
     grade_student_report_table(){
-        let exam = this.state.examvalue;
-        if(exam){
+        let exam1 = this.state.examvaluemulti1;
+        let exam2 = this.state.examvaluemulti2;
+        let exam3 = this.state.examvaluemulti3;
+        if(exam1 && exam2 && exam3){
             return <div> grade_student_report_table</div>
         }
     }
@@ -726,9 +764,9 @@ class StudentResult extends Component{
                         
 
         let student_select = <li className="btn-group mx-auto my-auto">
-                <span className="">Student</span>
-                <div className="form-inline input-group dropdown mx-1">
-                        <input type="text" className="form-control dropdown-toggle form-control-sm" 
+                <span className="my-auto">Student</span>
+                <div className="form-inline input-group dropdown mx-2">
+                        <input type="text" className="form-control dropdown-toggle form-control-sm my-auto" 
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Search Student"
                         onKeyUp={(e)=>this.filterStudents(e)} ref={this.filterstudentsinputid} />
                         <span className="input-group-text form-control-sm" disabled><FontAwesomeIcon icon={faSearch} /></span>

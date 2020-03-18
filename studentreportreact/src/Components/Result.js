@@ -512,6 +512,8 @@ class StudentResult extends Component{
                     const stateindex = 'results'+index;
                     results[index] = this.state[stateindex];
                     let cgpa = [];
+                    let count = 0;
+                                    
                     let data = <div className="container" key={index}>
                     <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
@@ -529,23 +531,25 @@ class StudentResult extends Component{
                         </tr>
                         {console.log("stateindex",results, stateindex)}
                         {(results[index])?results[index].map((result,ind)=>{
+                            if(this.state.gradesubjects.find(subject=> subject.id==result.subject)){
                                 let theory = Math.round(0.6*parseFloat(result.mark));
                                 let practical = Math.round( 0.4*parseFloat(result.cas));
                                 let total = theory +practical;
                                 let gpa = calculategrade(total);
                                 cgpa.push(gpa.gpa);
-                                console.log('inside',stateindex, cgpa);
+                                (ind)?count+=1:count=1;
                                 return <tr key={ind}>
                                     <td>{ind+1}</td>
                                     {/* Correct here and in home class mark display map */}
-                                    <td>{this.state.gradesubjects.forEach(subject=> (subject.id == result.subject)?subject.name:null)}</td>
+                                    <td>{this.state.gradesubjects.map(subject=> (subject.id == result.subject)?subject.name:null)}</td>
                                     <td>{theory}</td><td>{practical}</td><td>{total}</td><td>{gpa.gpa}</td><td>{gpa.grade}</td>
                                     </tr>
+                                }
                             }):null
                         }
                         </tbody>
                         <tfoot>
-                        <tr><td colSpan="5"></td><th colSpan="2">GPA: {(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th><td></td></tr>
+                        <tr><td colSpan="5"></td><th colSpan="2">GPA: {(!cgpa.length)?"N/A":(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th><td></td></tr>
                         <tr className="table-borderless">
                             <td colSpan="2" ></td>
                             <td colSpan="3" rowSpan="3">
@@ -574,6 +578,8 @@ class StudentResult extends Component{
                 let results = this.state.studentresults;
                 let gradesubjects = this.state.gradesubjects;
                 let cgpa = [];
+                let count = 0;
+                                
                 return (<div className="container">
                 <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
@@ -599,28 +605,31 @@ class StudentResult extends Component{
                         </tr>
                         {
                             (results.length>0)?results.map((result,index)=>{
-                                let theory = Math.round(0.6*parseFloat(result.mark));
-                                let practical = Math.round( 0.4*parseFloat(result.cas));
-                                let total = theory +practical;
-                                let gpa = calculategrade(total);
-                                cgpa.push(gpa.gpa);
-                                return <tr key={index}>
-                                    <td>{index+1}</td>
-                                    {/* Correct here and in home class mark display map */}
-                                    <td>{gradesubjects.map(subject=> (subject.id == result.subject)?subject.name:null)}</td>
-                                    <td>{theory}</td>
-                                    <td>{practical}</td>
-                                    <td>{total}</td>
-                                    <td>{gpa.gpa}</td>
-                                    <td>{gpa.grade}</td>
+                                if(gradesubjects.find(subject=> subject.id==result.subject)){
+                                    let theory = Math.round(0.6*parseFloat(result.mark));
+                                    let practical = Math.round( 0.4*parseFloat(result.cas));
+                                    let total = theory +practical;
+                                    let gpa = calculategrade(total);
+                                    cgpa.push(gpa.gpa);
+                                    (index)?count+=1:count=1;
+                                    return <tr key={index}>
+                                        <td>{count}</td>
+                                        {/* Correct here and in home class mark display map */}
+                                        <td>{gradesubjects.map(subject=> (subject.id == result.subject)?subject.name:null)}</td>
+                                        <td>{theory}</td>
+                                        <td>{practical}</td>
+                                        <td>{total}</td>
+                                        <td>{gpa.gpa}</td>
+                                        <td>{gpa.grade}</td>
 
-                                </tr>
+                                    </tr>
                                 }
-                                ):null          
+                            }
+                            ):null          
                         }
                     </tbody>
                     <tfoot>
-                    <tr><td colSpan="5"></td><th colSpan="2">GPA: {(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th><td></td></tr>
+                    <tr><td colSpan="5"></td><th colSpan="2">GPA: {(!cgpa.length)?"N/A":(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th><td></td></tr>
                     <tr className="table-borderless">
                         <td colSpan="2" ></td>
                         <td colSpan="3">

@@ -36,6 +36,9 @@ class StudentResult extends Component{
         };
         this.gradeselectRef = React.createRef();
         this.examselectRef = React.createRef();
+        this.examselectRef1 = React.createRef();
+        this.examselectRef2 = React.createRef();
+        this.examselectRef3 = React.createRef();
         this.studentselectRef = React.createRef();
         this.filterstudentsinputid = React.createRef();
         this.filterstudentslist = React.createRef();
@@ -286,9 +289,13 @@ class StudentResult extends Component{
             studentresultsmulti2:[],
             studentresultsmulti3:[],
         });
-        if(this.state.gradestudentresultclicked){
+        if(this.state.gradestudentresultclicked || this.state.gradestudentfinalreportclicked){
             this.get_subjects_by_grade(e.target.value);
         }
+        if(this.examselectRef1.current){ this.examselectRef1.current.selectedIndex=0}
+        if(this.examselectRef2.current){ this.examselectRef2.current.selectedIndex=0}
+        if(this.examselectRef3.current){ this.examselectRef3.current.selectedIndex=0}
+
     }
 
     student_selected(e){
@@ -566,10 +573,11 @@ class StudentResult extends Component{
                     let cgpa = [];
                     let count = 0;
                                     
-                    let data = <div className="container" key={index}>
+                    let data = <div className="container mt-2" key={index}>
+                        <div className="container result">
+                            <div><h3>Exam Report: {exam_title}</h3></div>
                     <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
-                        <tr><td colSpan="10"><b>Exam Report: {exam_title}</b></td></tr>
                         <tr><td colSpan="5">Name: {student.student_name}</td>
                             <td colSpan="2">Class: {this.state.grades.find(grade=>grade.id == student.student_grade).name}</td>
                             <td>Class Teacher Remarks</td>
@@ -577,7 +585,7 @@ class StudentResult extends Component{
                         <tr><td>SN</td><td>Subjects</td><td>Theory</td><td>Practical</td><td>Total</td><td>GPA</td><td>Grade</td>
                             <td rowSpan="0" >{
                                 (this.state.grades.find(grade=>grade.classteacher == this.props.userid))?
-                                <textarea rows="6" placeholder={this.resultcomment(student.id, exam)} className="form-control form-control-sm" onBlur={(e)=>this.update_result_comment(e, student.id, exam)}/>
+                                <textarea rows="4" placeholder={this.resultcomment(student.id, exam)} className="form-control form-control-sm" onBlur={(e)=>this.update_result_comment(e, student.id, exam)}/>
                                 : this.resultcomment(student.id, exam)
                             }</td>
                         </tr>
@@ -602,17 +610,17 @@ class StudentResult extends Component{
                         </tbody>
                         <tfoot>
                         <tr><td colSpan="5"></td><th colSpan="2">GPA: {(!cgpa.length)?"N/A":(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th><td></td></tr>
-                        <tr className="table-borderless">
-                            <td colSpan="2" ></td>
-                            <td colSpan="3" rowSpan="3">
-                                <b className="signature">Class Teacher</b>
-                            </td>
-                            <td colSpan="3" rowSpan="3">
-                                <b className="signature">Principal</b>
-                            </td>
-                        </tr>
                         </tfoot>
                     </table>
+                        <div className="row signature-div">
+                            <div className="col-md-6 d-flex justify-content-end">
+                                <b className="signature">Class Teacher</b>
+                            </div>
+                            <div className="col-md-6 d-flex justify-content-center">
+                                <b className="signature">Principal</b>
+                            </div>
+                        </div>
+                    </div>
                     </div>
                     payload.push(data);
                     }
@@ -632,10 +640,10 @@ class StudentResult extends Component{
                 let cgpa = [];
                 let count = 0;
                                 
-                return (<div className="container">
+                return (<div className="container mt-2"><div className="container result">
+                    <div><h3>Exam Report: {exam_title}</h3></div>
                 <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
-                        <tr><td colSpan="10"><b>Exam Report: {exam_title}</b></td></tr>
                         <tr>
                             <td colSpan="5">Name: {student.student_name}</td>
                             <td colSpan="2">Class: {this.state.grades.find(grade=>grade.id == student.student_grade).name}</td>
@@ -651,7 +659,7 @@ class StudentResult extends Component{
                             <td>Grade</td>
                             <td rowSpan="0" >{
                                 (this.state.grades.find(grade=>grade.classteacher == this.props.userid))?
-                                <textarea rows="6" placeholder={this.resultcomment(student.id, exam)} className="form-control form-control-sm" onBlur={(e)=>this.update_result_comment(e, student.id, exam)}/>
+                                <textarea rows="4" placeholder={this.resultcomment(student.id, exam)} className="form-control form-control-sm" onBlur={(e)=>this.update_result_comment(e, student.id, exam)}/>
                                 : this.resultcomment(student.id, exam)
                             }</td>
                         </tr>
@@ -682,18 +690,17 @@ class StudentResult extends Component{
                     </tbody>
                     <tfoot>
                     <tr><td colSpan="5"></td><th colSpan="2">GPA: {(!cgpa.length)?"N/A":(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</th><td></td></tr>
-                    <tr className="table-borderless">
-                        <td colSpan="2" ></td>
-                        <td colSpan="3">
-                            <b className="signature">Class Teacher</b>
-                        </td>
-                        <td colSpan="3">
-                            <b className="signature">Principal</b>
-                        </td>
-                    </tr>
-                    
                     </tfoot>
                 </table>
+                    <div className="row signature-div">
+                        <div className="col-md-6 d-flex justify-content-end">
+                            <b className="signature">Class Teacher</b>
+                        </div>
+                        <div className="col-md-6 d-flex justify-content-center">
+                            <b className="signature">Principal</b>
+                        </div>
+                    </div>
+                </div>
                 </div>
                 );
             }
@@ -705,23 +712,63 @@ class StudentResult extends Component{
         let exam2 = this.state.examvaluemulti2;
         let exam3 = this.state.examvaluemulti3;
         if(exam1 && exam2 && exam3){
+            let gradesubjects = this.state.gradesubjects;
+            let results1 = this.state.studentresultsmulti1;
+            let results2 = this.state.studentresultsmulti2;
+            let results3 = this.state.studentresultsmulti3;
+            let students = this.state.students;
+            let studentselected = this.state.studentvalue;
+            let student = students.find(std => std.id == studentselected);
+            let cgpa = [];
+            let count = 0;
+            
             return <div className="container">
                 <div className="report">
                     <div><h3>Progress Report</h3></div>
                     <div className="row text-left">
-                        <div className="col-md-5" ><b className="mx-4">Name:</b></div><div className="col-md-6"><b  className="mx-4">Grade:</b></div>
+                        <div className="col-md-5" ><b className="mx-4">Name:{student.student_name}</b></div>
+                        <div className="col-md-6"><b  className="mx-4">Grade:{this.state.grades.find(grade=>grade.id == student.student_grade).name}</b></div>
                     </div>
                     <div className="container">
                         <table className="table table-bordered table-sm">
                             <tbody>
                                 <tr><td rowSpan="2">Subjects</td><td>1ST TERM</td><td>2ND TERM</td><td>3RD TERM</td><td>AVERAGE</td><td rowSpan="2">GPA</td><td rowSpan="2">GRADE</td></tr>
                                 <tr><td>20%</td><td>30%</td><td>50%</td><td>100%</td></tr>
+                                {
+                                    gradesubjects.map(subject=>{
+                                        let res1 = results1.find(res=> res.student == student.id && res.subject == subject.id);
+                                        let res2 = results2.find(res=> res.student == student.id && res.subject == subject.id); 
+                                        let res3 = results3.find(res=> res.student == student.id && res.subject == subject.id);
+                                        if(!res1) res1= {};
+                                        if(!res2) res2= {};
+                                        if(!res3) res3= {};
+                                        let mark1 = Math.round(0.6*parseFloat(res1.mark)) + Math.round( 0.4*parseFloat(res1.cas));
+                                        let mark2 = Math.round(0.6*parseFloat(res2.mark)) + Math.round( 0.4*parseFloat(res2.cas));
+                                        let mark3 = Math.round(0.6*parseFloat(res3.mark)) + Math.round( 0.4*parseFloat(res3.cas));
+                                        let mark20 = Math.round(0.2*mark1);
+                                        let mark30 = Math.round(0.3*mark2);
+                                        let mark50 = Math.round(0.5*mark3);
+                                        let marksum = mark20 + mark30 + mark50;
+                                        let gpa = calculategrade(marksum);
+                                        cgpa.push(gpa.gpa);
+                                        return <tr>
+                                            <td>{subject.name}</td>
+                                            <td>{mark20.toString()}</td>
+                                            <td>{mark30.toString()}</td>
+                                            <td>{mark50.toString()}</td>
+                                            <td>{marksum.toString()}</td>
+                                            <td>{gpa.gpa}</td>
+                                            <td>{gpa.grade}</td>
+
+                                        </tr>
+                                    })
+                                }
                             </tbody>
                         </table>
                     </div>
                     <div className="row">
-                        <div className="col-md-6">
-                            <table className="table table-bordered table-sm col-md-6">
+                        <div className="col-md-6 d-flex justify-content-center ">
+                            <table className="table table-sm col-md-6 grade_to_gpa">
                                 <tbody>
                                     <tr><td>Grade</td><td>GPA</td></tr>
                                     <tr><td>A+</td><td>Outstanding 4.0</td></tr>
@@ -735,8 +782,15 @@ class StudentResult extends Component{
                                     <tr><td>E</td><td>Very Insufficient 0.8</td></tr>
                                 </tbody>
                             </table>
+                            
                         </div>
-                        <div className="col-md-6">GPA:</div>
+                        <div className="col-md-6">
+                            <div><b>GPA: {(!cgpa.length)?"N/A":(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</b></div>
+                            <div className="row signature-div">
+                                <span className="col-md-6"><b className="signature">Class Teacher</b></span>
+                                <span className="col-md-6"><b className="signature">Principal</b></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -747,13 +801,104 @@ class StudentResult extends Component{
         let exam2 = this.state.examvaluemulti2;
         let exam3 = this.state.examvaluemulti3;
         if(exam1 && exam2 && exam3){
-            return <div> grade_student_report_table</div>
+            let gradesubjects = this.state.gradesubjects;
+            let students = this.state.students;
+            let payload = [];
+            let current_grade = this.state.gradevalue;
+                
+            students.map((student, index)=>{
+                if(student.student_grade == current_grade){
+                let cgpa = [];
+                
+                let data = <div className="container mt-2" key={index}>
+                <div className="report">
+                    <div><h3>Progress Report</h3></div>
+                    <div className="row text-left">
+                        <div className="col-md-5" ><b className="mx-4">Name:{student.student_name}</b></div>
+                        <div className="col-md-6"><b  className="mx-4">Grade:{this.state.grades.find(grade=>grade.id == student.student_grade).name}</b></div>
+                    </div>
+                    <div className="container">
+                        <table className="table table-bordered table-sm">
+                            <tbody>
+                                <tr><td rowSpan="2">Subjects</td><td>1ST TERM</td><td>2ND TERM</td><td>3RD TERM</td><td>AVERAGE</td><td rowSpan="2">GPA</td><td rowSpan="2">GRADE</td></tr>
+                                <tr><td>20%</td><td>30%</td><td>50%</td><td>100%</td></tr>
+                                {
+                                    gradesubjects.map((subject, ind)=>{
+                                        const stateindex1 = 'results'+index+1;
+                                        const stateindex2 = 'results'+index+2;
+                                        const stateindex3 = 'results'+index+3;
+                                        
+                                        if (this.state[stateindex1] && this.state[stateindex2] && this.state[stateindex3]){
+                                            let res1 = this.state[stateindex1].find(res=> res.student == student.id && res.subject == subject.id);
+                                            let res2 = this.state[stateindex2].find(res=> res.student == student.id && res.subject == subject.id); 
+                                            let res3 = this.state[stateindex3].find(res=> res.student == student.id && res.subject == subject.id);
+                                            console.log(res1,res2,res3);
+                                            if(!res1) res1= {};
+                                            if(!res2) res2= {};
+                                            if(!res3) res3= {};
+                                            let mark1 = Math.round(0.6*parseFloat(res1.mark)) + Math.round( 0.4*parseFloat(res1.cas));
+                                            let mark2 = Math.round(0.6*parseFloat(res2.mark)) + Math.round( 0.4*parseFloat(res2.cas));
+                                            let mark3 = Math.round(0.6*parseFloat(res3.mark)) + Math.round( 0.4*parseFloat(res3.cas));
+                                            let mark20 = Math.round(0.2*mark1);
+                                            let mark30 = Math.round(0.3*mark2);
+                                            let mark50 = Math.round(0.5*mark3);
+                                            let marksum = mark20 + mark30 + mark50;
+                                            let gpa = calculategrade(marksum);
+                                            cgpa.push(gpa.gpa);
+                                            return <tr key={ind}>
+                                                <td>{subject.name}</td>
+                                                <td>{mark20.toString()}</td>
+                                                <td>{mark30.toString()}</td>
+                                                <td>{mark50.toString()}</td>
+                                                <td>{marksum.toString()}</td>
+                                                <td>{gpa.gpa}</td>
+                                                <td>{gpa.grade}</td>
+
+                                            </tr>
+                                        }
+                                    })
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-6 d-flex justify-content-center ">
+                            <table className="table table-sm col-md-6 grade_to_gpa">
+                                <tbody>
+                                    <tr><td>Grade</td><td>GPA</td></tr>
+                                    <tr><td>A+</td><td>Outstanding 4.0</td></tr>
+                                    <tr><td>A</td><td>Excellent 3.6</td></tr>
+                                    <tr><td>B+</td><td>Very Good 3.2</td></tr>
+                                    <tr><td>B</td><td>Good 2.8</td></tr>
+                                    <tr><td>C+</td><td>Satisfactory 2.4</td></tr>
+                                    <tr><td>C</td><td>Acceptable 2.0</td></tr>
+                                    <tr><td>D+</td><td>Partially Acceptable 1.6</td></tr>
+                                    <tr><td>D</td><td>Insufficient 1.2</td></tr>
+                                    <tr><td>E</td><td>Very Insufficient 0.8</td></tr>
+                                </tbody>
+                            </table>
+                            
+                        </div>
+                        <div className="col-md-6">
+                            <div><b>GPA: {(!cgpa.length)?"N/A":(cgpa.reduce((sum, gpa) => (gpa != 'FAIL')? sum + parseFloat(gpa): sum, 0)/cgpa.length).toFixed(2)}</b></div>
+                            <div className="row signature-div">
+                                <span className="col-md-6"><b className="signature">Class Teacher</b></span>
+                                <span className="col-md-6"><b className="signature">Principal</b></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                payload.push(data);
+                }
+            });
+            return payload;
         }
     }
     render(){
-        let grade_select = <li className="btn-group mx-2">
-                <span className="mx-2">Grade</span>
-                <select onChange={(e)=>this.grade_selected(e)} ref={this.gradeselectRef} className="form-control form-control-sm" defaultValue="none">
+        let grade_select = <li className="btn-group mx-2 my-auto">
+                <span className="my-auto">Grade</span>
+                <select onChange={(e)=>this.grade_selected(e)} ref={this.gradeselectRef} className="form-control form-control-sm my-auto" defaultValue="none">
                     <option value="none" disabled hidden>Select an Option </option> 
                     {
                     this.state.grades.map((items, key) => 
@@ -794,7 +939,7 @@ class StudentResult extends Component{
                 </li>
         let exam_select_multi1 = <li className="form-group mx-1" key="es1">
         <span className="mx-1">1st Term</span>
-        <select onChange={(e)=>this.exam_selected(e, 1)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
+        <select onChange={(e)=>this.exam_selected(e, 1)} ref={this.examselectRef1}  className="form-control form-control-sm" defaultValue="none">
             <option value="none" disabled hidden>Select an Option </option> 
             {
             this.state.exams.map((items, key) => 
@@ -805,7 +950,7 @@ class StudentResult extends Component{
         
         let exam_select_multi2 = <li className="form-group mx-1" key="es2">
         <span className="mx-1">2nd Term</span>
-        <select onChange={(e)=>this.exam_selected(e, 2)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
+        <select onChange={(e)=>this.exam_selected(e, 2)} ref={this.examselectRef2}  className="form-control form-control-sm" defaultValue="none">
             <option value="none" disabled hidden>Select an Option </option> 
             {
             this.state.exams.map((items, key) => 
@@ -815,7 +960,7 @@ class StudentResult extends Component{
         </li>
         let exam_select_multi3 = <li className="form-group mx-1" key="es3">
         <span className="mx-1">3rd Term</span>
-        <select onChange={(e)=>this.exam_selected(e, 3)} ref={this.examselectRef}  className="form-control form-control-sm" defaultValue="none">
+        <select onChange={(e)=>this.exam_selected(e, 3)} ref={this.examselectRef3}  className="form-control form-control-sm" defaultValue="none">
             <option value="none" disabled hidden>Select an Option </option> 
             {
             this.state.exams.map((items, key) => 

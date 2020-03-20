@@ -5,7 +5,7 @@ function Welcome(){
                 <div className="d-flex justify-content-center h-100">
                     <div className="welcome">
                         <div className="card-header">
-                       <h3> Guidelines</h3>
+                       <h3> Information</h3>
                         </div>
                         <div className="card-body text-left">
                             <div className="row">
@@ -27,7 +27,7 @@ function Welcome(){
                                         <li>can see marks of all subjects</li>
                                         <li>can see student's report card</li>
                                         <li>cannot add comments (should be class teacher)</li>
-
+                                        <li>subjects with total marks 50 should be added as marks equivalent to 100</li>
                                     </ol>
                                 </div>
                             </div>

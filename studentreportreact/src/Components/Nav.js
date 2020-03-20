@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { toast } from 'react-toastify';
-import {HOST} from './constants';
 
 // function Nav(props) {
 class Nav extends Component{

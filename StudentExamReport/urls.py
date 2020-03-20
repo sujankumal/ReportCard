@@ -14,7 +14,7 @@ urlpatterns = [
     path('user-logout/', views.user_logout, name="user_logout"),
     path('user_verify/', views.verify_user, name="verify_user"),
     path('current_user/', views.current_user),
-    path('users/', views.UserList.as_view()),
+    path('is_admin/',views.is_admin),
     path('view-grades/', views.view_grades),
     path('get-all-students/', views.view_all_students),
     path('teachers-view-grade/', views.teachers_view_grade),
@@ -30,5 +30,11 @@ urlpatterns = [
     path('teachers-update-student-cas/',views.teachers_update_student_cas),
     path('teachers-update-student-comment/',views.teachers_update_student_comment),
     path('get-exam-comment/<int:exam>/', views.find_exam_comment),
-    path('update-result-comment/', views.update_result_comment)
+    path('update-result-comment/', views.update_result_comment),
+    path('get_all_teacher_grades_students_subjects/', views.get_all_teacher_grades_students_subjects),
+    path('updateStudentName/',views.updateStudentName),
+    path('updateStudentPhone/',views.updateStudentPhone),
+    path('updateStudentAddress/',views.updateStudentAddress),
+    path('updateStudentDOB/',views.updateStudentDOB),
+    path('updateStudentGrade/',views.updateStudentGrade),
 ]

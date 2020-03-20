@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {TITLE, HOST} from './constants';
 import Result from './Result';
+import AdminInput from './AdminInput';
 toast.configure({
   autoClose: 3000,
   draggable: false,
@@ -29,6 +30,7 @@ class App extends Component{
       userid:'',
       access_token:(access_token)? access_token:'',
       display_result: false,
+      is_admin:false,
     }
   }
   set_refresh_token(local, refresh){
@@ -82,6 +84,7 @@ class App extends Component{
           access_token: json.access,
         });
         this.get_username();
+        this.check_admin();
       }).catch(function(error) {
         toast.error("Something went Wrong!");
     });
@@ -173,6 +176,18 @@ class App extends Component{
         toast.success('Welcome ' + this.state.username);
       });
   }
+  check_admin = async() => {
+    const header = this.auth_headers();
+    await fetch(HOST+'/is_admin/', {
+        method: 'GET',
+        headers: header ,     
+        })
+      .then(res => res.json())
+      .then(json => {
+        console.log(json);
+        this.setState({ is_admin: json });
+      });
+  }
   show_result=()=>{
     this.setState({
       display_result:true,
@@ -193,7 +208,7 @@ class App extends Component{
         form = <SignupForm handle_signup={this.handle_signup} />;
         break;
       case 'Home':
-        (this.state.logged_in)? form =<Home/> : form = <Welcome/>
+        (this.state.logged_in)? form =<Home/> : form = <Welcome/>;
         break;
       default:
         form = <Welcome />;
@@ -211,8 +226,18 @@ class App extends Component{
           display_home = {this.display_home}
           username = {this.state.username}
         />
-        {this.state.logged_in ? (this.state.display_result)?<Result auth_headers = {this.auth_headers} show_home={this.show_home} userid ={this.state.userid}/>:<Home auth_headers = {this.auth_headers} show_result= {this.show_result}/> :form }
-      
+        {this.state.logged_in ? 
+          (this.state.display_result)?
+            <Result auth_headers = {this.auth_headers} show_home={this.show_home} userid ={this.state.userid}/>
+          :
+            (this.state.displayed_form == 'AdminInput' && this.state.is_admin)?
+              <AdminInput auth_headers = {this.auth_headers} show_home={this.show_home} userid ={this.state.userid}/>
+            :
+              <Home auth_headers = {this.auth_headers} show_result= {this.show_result}/>
+        :
+          form
+        }
+        
       </div>
     );
   }

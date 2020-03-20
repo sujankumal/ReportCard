@@ -24,27 +24,12 @@ def current_user(request):
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
-class UserList(APIView):
+@api_view(['GET'])
+def is_admin(request):
     """
-    Create a new user. It's called 'UserList' because normally we'd have a get
-    method here too, for retrieving a list of all User objects.
+    Checks if current user is super user
     """
-
-    # permission_classes = (permissions.AllowAny,)
-
-    # def post(self, request, format=None):
-    #     user = request.data.get('user')
-    #     if not user:
-    #         return Response({'response' : 'error', 'message' : 'No data found'})
-        
-        # serializer = UserSerializerWithToken(data=request.data)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # else:
-        #     return Response({"response" : "error", "message" : serializer.errors})
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    return Response(request.user.is_superuser)
         
 @login_required(login_url='StudentExamReport:user_login')
 def index(request):
@@ -223,3 +208,80 @@ def update_result_comment(request):
     comments = ResultComment.objects.filter(exam=request.data.get('exam'))
     serialized_comment = ResultCommentSerializer(comments, many=True)
     return Response(serialized_comment.data)
+
+
+@api_view(['GET'])
+def get_all_teacher_grades_students_subjects(request):
+    users = User.objects.all().order_by('username')
+    grades = Grade.objects.all().order_by('name')
+    students = Student.objects.all().order_by('student_name')
+    subjects = Subject.objects.all().order_by('code')
+    serialized_users = UserSerializer(users, many=True) 
+    serialized_grades = GradeSerializer(grades, many=True)
+    serialized_students = StudentSerializer(students, many=True)
+    serialized_subjects = SubjectSerializer(subjects, many=True)
+    data = {
+        'users': serialized_users.data,
+        'grades':serialized_grades.data,
+        'students':serialized_students.data,
+        'subjects':serialized_subjects.data,
+        }
+    return Response(data)
+
+
+@api_view(['POST'])
+def updateStudentName(request):
+    Student.objects.update_or_create(
+        date_of_birth = request.data.get('student')['date_of_birth'],
+        phone = request.data.get('student')['phone'], 
+        defaults={'student_name': request.data.get('student_name')},
+    )
+    students = Student.objects.all().order_by('student_name')
+    serialized_students = StudentSerializer(students, many=True)
+    return Response(serialized_students.data)
+
+
+@api_view(['POST'])
+def updateStudentPhone(request):
+    Student.objects.update_or_create(
+        date_of_birth = request.data.get('student')['date_of_birth'],
+        student_name = request.data.get('student')['student_name'], 
+        defaults={'phone': request.data.get('phone')},
+    )
+    students = Student.objects.all().order_by('student_name')
+    serialized_students = StudentSerializer(students, many=True)
+    return Response(serialized_students.data)
+
+    
+@api_view(['POST'])
+def updateStudentAddress(request):
+    Student.objects.update_or_create(
+        date_of_birth = request.data.get('student')['date_of_birth'],
+        student_name = request.data.get('student')['student_name'], 
+        defaults={'address': request.data.get('address')},
+    )
+    students = Student.objects.all().order_by('student_name')
+    serialized_students = StudentSerializer(students, many=True)
+    return Response(serialized_students.data)
+
+@api_view(['POST'])
+def updateStudentDOB(request):
+    Student.objects.update_or_create(
+        date_of_birth = request.data.get('student')['date_of_birth'],
+        student_name = request.data.get('student')['student_name'], 
+        defaults={'date_of_birth': request.data.get('date_of_birth')},
+    )
+    students = Student.objects.all().order_by('student_name')
+    serialized_students = StudentSerializer(students, many=True)
+    return Response(serialized_students.data)
+
+@api_view(['POST'])
+def updateStudentGrade(request):
+    Student.objects.update_or_create(
+        date_of_birth = request.data.get('student')['date_of_birth'],
+        student_name = request.data.get('student')['student_name'], 
+        defaults={'student_grade': Grade.objects.get(pk= request.data.get('student_grade'))},
+    )
+    students = Student.objects.all().order_by('student_name')
+    serialized_students = StudentSerializer(students, many=True)
+    return Response(serialized_students.data)

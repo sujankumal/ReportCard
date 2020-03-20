@@ -19,7 +19,7 @@ class Nav extends Component{
 
     const logged_in_nav = (
       <ul className="navbar-nav mr-auto">
-      <li className="nav-item"><a className="nav-link" href={null}>{this.props.username}</a></li>
+      <li className="nav-item"><a className="nav-link" href={null} onClick={() => this.props.display_form('AdminInput')}>{this.props.username}</a></li>
       <li  className="nav-item"><a className="nav-link" href={null} onClick={this.props.handle_logout}>Logout</a></li>
     </ul>
   );

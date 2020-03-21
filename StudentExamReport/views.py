@@ -11,7 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from StudentExamReport.forms import LoginForm
-from .serializers import UserSerializer, GradeSerializer,StudentSerializer, SubjectSerializer, ExamSerializer, ResultSerializer, ResultCommentSerializer
+from .serializers import UserSerializer, GradeSerializer,StudentSerializer, SubjectSerializer, ExamSerializer, ResultSerializer, ResultCommentSerializer, StudentSubjectSerializer
 from .models import Exam, Grade, Subject, Student, StudentSubject, Result, ResultComment
 
 # Create your views here.
@@ -211,20 +211,23 @@ def update_result_comment(request):
 
 
 @api_view(['GET'])
-def get_all_teacher_grades_students_subjects(request):
+def get_all_teacher_grades_students_subjects_studentsubject(request):
     users = User.objects.all().order_by('username')
     grades = Grade.objects.all().order_by('name')
     students = Student.objects.all().order_by('student_name')
     subjects = Subject.objects.all().order_by('code')
+    studentsubject = StudentSubject.objects.all()
     serialized_users = UserSerializer(users, many=True) 
     serialized_grades = GradeSerializer(grades, many=True)
     serialized_students = StudentSerializer(students, many=True)
     serialized_subjects = SubjectSerializer(subjects, many=True)
+    serialized_studentsubject = StudentSubjectSerializer(studentsubject, many=True)
     data = {
         'users': serialized_users.data,
         'grades':serialized_grades.data,
         'students':serialized_students.data,
         'subjects':serialized_subjects.data,
+        'studentsubject':serialized_studentsubject.data,
         }
     return Response(data)
 
@@ -285,3 +288,14 @@ def updateStudentGrade(request):
     students = Student.objects.all().order_by('student_name')
     serialized_students = StudentSerializer(students, many=True)
     return Response(serialized_students.data)
+
+
+@api_view(['POST'])
+def updateSubjectTeacher(request):
+    Subject.objects.update_or_create(
+        code = request.data.get('subject')['code'],
+        defaults={'teacher': User.objects.get(pk= request.data.get('teacher'))},
+    )
+    subject = Subject.objects.all().order_by('code')
+    serialized_subject = SubjectSerializer(subject, many=True)
+    return Response(serialized_subject.data)

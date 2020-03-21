@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { toast} from 'react-toastify';
 import {HOST} from './constants';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
 
 export default class AdminInput extends Component{
 
@@ -12,17 +14,21 @@ export default class AdminInput extends Component{
             grades:[],
             students:[],
             subjects:[],
+            studentsubject:[],
+            studentvalue:'',
             display:0,
         };
         this.gradeselectRef = React.createRef();
+        this.filterstudentslist = React.createRef();
+        this.filterstudentsinputid = React.createRef();
         
     }
     componentDidMount(){
-        this.get_all_teacher_grades_students_subjects();
+        this.get_all_teacher_grades_students_subjects_studentsubject();
     }
-    async get_all_teacher_grades_students_subjects(){
+    async get_all_teacher_grades_students_subjects_studentsubject(){
         const header = await this.props.auth_headers();
-        await fetch(HOST+'/get_all_teacher_grades_students_subjects/', {
+        await fetch(HOST+'/get_all_teacher_grades_students_subjects_studentsubject/', {
             method: 'GET',
             headers: header ,
             })
@@ -48,16 +54,53 @@ export default class AdminInput extends Component{
                     grades:data.grades,
                     students:data.students,
                     subjects:data.subjects,
+                    studentsubject:data.studentsubject,
                 });
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
             });
     }
-
+    
     edit_student_clicked = () => {
         this.setState({
             display:1,
         })
+    }
+    edit_student_subject_clicked = () => {
+        this.setState({
+            display:2,
+        })
+    }
+    student_selected(e){
+        this.setState({
+            studentvalue: e.target.attributes.value.value,
+        });
+        this.filterstudentsinputid.current.placeholder = this.state.students.find(std=>std.id == e.target.attributes.value.value).student_name;
+    }
+    filterStudents(e){
+        let target = e.target;
+        let filter = target.value.toUpperCase();
+        let filterstudentslist = target.nextElementSibling.nextElementSibling.childNodes[0].childNodes[1].childNodes;
+        this.state.students.forEach(student=>{
+                if (student.student_name.toUpperCase().indexOf(filter) > -1) {
+                    filterstudentslist.forEach((tr)=>
+                        {
+                            if(student.id == tr.attributes.value.value){
+                                tr.style.display = ""
+                            }
+                        }
+                      );
+                  } else {
+                      filterstudentslist.forEach((tr)=>
+                        {
+                            if(student.id == tr.attributes.value.value){
+                                tr.style.display = "none"
+                            }
+                        } 
+                      );
+                  }
+            }
+        );
     }
     
     async updateStudentName(event, student){
@@ -175,6 +218,30 @@ export default class AdminInput extends Component{
             }).catch(function(error) {toast.error("Something went Wrong!");});
 
     }
+    async updateSubjectTeacher(event, subject){
+        let target = event.target;
+        let value = target.value;
+        if (value == 'none'){
+            return
+        }
+        event.target.value = value;
+        let header = await this.props.auth_headers();
+        header['Content-Type'] = 'application/json';
+        await fetch(HOST+'/updateSubjectTeacher/', {
+            method: 'POST', headers: header , body:JSON.stringify({
+                'teacher': value,
+                'subject': subject,
+                }),
+            })
+            .then(res => { if(res.status == 400){toast.error('Bad Request');return}
+                if(res.status == 401){toast.error('Unauthorized');return}
+                if(res.status == 403){toast.error('Forbidden');return}
+                return res.json();
+            })
+            .then((data) => {this.setState({subjects:data});
+            }).catch(function(error) {toast.error("Something went Wrong!");});
+
+    }
     render(){
         let studentsedit = <div className="container">
             <table className= "table table-bordered table-responsive table-hover table-sm">
@@ -201,6 +268,63 @@ export default class AdminInput extends Component{
                 </tbody>
             </table>
         </div>
+        let student_search = <div className = "container">
+            <div className="btn-group mx-auto my-auto">
+                <div className="form-inline input-group input-group-sm dropdown mx-2">
+                        <input type="text" className="form-control dropdown-toggle  my-auto" 
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Search and Add"
+                        onKeyUp={(e)=>this.filterStudents(e)} ref={this.filterstudentsinputid} />
+                        <span className="input-group-text" disabled><FontAwesomeIcon icon={faSearch} /></span>
+                        <div  className="dropdown-menu overflow-auto" style={{height: 200 + 'px'}} >
+                            <table className="table table-bordered table-striped table-hover table-sm">
+                                <thead><tr><td>Students Name</td></tr></thead>
+                                <tbody ref = {this.filterstudentslist}>{
+                                this.state.students.map((items, key) => 
+                                <tr key={key} value={items.id}><td onClick={ (e)=>this.student_selected(e)} value={items.id}>{items.student_name}</td></tr>
+                                )
+                                }</tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        let subjectsedit = <div className="container">
+            <table className="table-responsive table table-bordered table-hover table-sm text-left">
+                <tbody>
+                    <tr><td>SN</td><td>CODE</td><td>Subject name</td><td>Teacher</td><td>Students</td></tr>
+                    {
+                        this.state.subjects.map(
+                            (subject,index)=>{
+                            return <tr key={index}>
+                                <td>{index+1}</td>
+                                <td>{subject.code}</td>
+                                <td>{subject.name}</td>
+                                <td><select onChange={(event)=>this.updateSubjectTeacher(event, subject)} ref={this.subjectselectRef} className="form-control form-control-sm my-auto" defaultValue="none">
+                                    <option value="none" disabled hidden>{this.state.teachers.find(teacher=> teacher.id == subject.teacher).username}</option> 
+                                    {
+                                    this.state.teachers.map((items, key) => 
+                                        <option key={key} value={items.id}>{items.username}</option>
+                                    )}
+                                </select>
+                                </td>
+                                <td className="width-60">{student_search} {
+                                    this.state.studentsubject.map((studentsubject, ind)=>{
+                                        if(studentsubject.subject == subject.id){
+                                            return <span className="mx-1 btn-group btn-sm subjectstudentspan" key={ind}>
+                                                {this.state.students.find(student=>student.id == studentsubject.student).student_name}
+                                                <button className="btn btn-sm d-flex"><FontAwesomeIcon icon={faTimes} color="red"/></button>
+                                            </span>
+                                        }
+                                    })    
+                                }</td>
+                            </tr>
+                            }
+                        )
+                    }
+
+                </tbody>
+            </table>
+        </div>
         return <div className="container">
         <div className="container">
         <nav className="navbar navbar-expand-md navbar-light bg-light my-2">
@@ -218,13 +342,14 @@ export default class AdminInput extends Component{
             </button>
             <div className="collapse navbar-collapse" id="navbarText1">
                 <ul className="navbar-nav mr-auto">
-                    <li> <a href={null} onClick={this.edit_student_clicked}>Edit Student Details</a></li> 
+                    <li> <button className="btn btn-sm mx-4" onClick={this.edit_student_clicked}>Edit Student Details</button></li>
+                    <li> <button className="btn btn-sm mx-4" onClick={this.edit_student_subject_clicked}>Edit Student Subject</button></li> 
                 </ul>
             </div>    
         </nav>
     </div>
     { console.log('Admin Input: ')}
-    {(this.state.display == 1)?studentsedit:null}
+    {(this.state.display == 1)?studentsedit:(this.state.display == 2)?subjectsedit:null}
     
 </div>
     }

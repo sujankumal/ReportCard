@@ -113,7 +113,7 @@ class App extends Component{
   
   handle_logout = () => {
     localStorage.removeItem('refresh');
-    this.setState({ logged_in: false, username: '', userid:''});
+    this.setState({ logged_in: false, username: '', userid:'', access_token:null});
     this.refresh_token = '';
   };
 
@@ -207,12 +207,10 @@ class App extends Component{
       case 'signup':
         form = <SignupForm handle_signup={this.handle_signup} />;
         break;
-      case 'Home':
-        (this.state.logged_in)? form =<Home/> : form = <Welcome/>;
-        break;
+        
       default:
         form = <Welcome />;
-        // form = <LoginForm handle_login={this.handle_login} />;
+        
     }
     return (
       <div className="App">
@@ -227,15 +225,15 @@ class App extends Component{
           username = {this.state.username}
         />
         {this.state.logged_in ? 
-          (this.state.display_result)?
-            <Result auth_headers = {this.auth_headers} show_home={this.show_home} userid ={this.state.userid}/>
-          :
-            (this.state.displayed_form == 'AdminInput' && this.state.is_admin)?
+          (this.state.displayed_form == 'AdminInput' && this.state.is_admin)?
               <AdminInput auth_headers = {this.auth_headers} show_home={this.show_home} userid ={this.state.userid}/>
             :
-              <Home auth_headers = {this.auth_headers} show_result= {this.show_result}/>
-        :
-          form
+              (this.state.display_result)?
+                <Result auth_headers = {this.auth_headers} show_home={this.show_home} userid ={this.state.userid}/>
+              :
+                <Home auth_headers = {this.auth_headers} show_result= {this.show_result}/>
+          :
+            form
         }
         
       </div>

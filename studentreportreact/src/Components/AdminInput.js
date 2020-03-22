@@ -3,6 +3,7 @@ import { toast} from 'react-toastify';
 import {HOST} from './constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
+import CSVReader from 'react-csv-reader';
 
 export default class AdminInput extends Component{
 
@@ -17,6 +18,7 @@ export default class AdminInput extends Component{
             studentsubject:[],
             studentvalue:'',
             display:0,
+            jsonfromcsv:[],
         };
         this.gradeselectRef = React.createRef();
         this.filterstudentslist = React.createRef();
@@ -69,6 +71,11 @@ export default class AdminInput extends Component{
     edit_student_subject_clicked = () => {
         this.setState({
             display:2,
+        })
+    }
+    import_from_csv = () => {
+        this.setState({
+            display:3,
         })
     }
     student_selected(e){
@@ -395,6 +402,84 @@ export default class AdminInput extends Component{
                 </tbody>
             </table>
         </div>
+        let importfromcsv = <div className="container">
+                <div className="inputfile">
+                    <CSVReader cssClass="react-csv-input"
+                            label="Select CSV with Student's information"
+                            onFileLoaded={(data, fileInfo) => {
+                                let title = [];
+                                title = data[0];
+                                let jsonarray = [];
+                                data.slice(1).map(d=>{
+                                    let row = {};
+                                    row[title[0]]=d[0];
+                                    row[title[1]]=d[1];
+                                    row[title[2]]=d[2];
+                                    row[title[3]]=d[3];
+                                    row[title[4]]=d[4];
+                                    jsonarray.push(row);
+                                })
+                                this.setState({
+                                    jsonfromcsv: jsonarray,
+                                });
+                                }} />
+                    
+                </div>
+                <div className="container">
+                    {
+                        <table className= "table table-bordered table-responsive table-hover table-sm">
+                        <tbody>
+                            <tr><td>SN</td><td>student</td><td>phone</td><td>address</td><td>dob</td><td>grade</td></tr>
+                            {
+                            this.state.jsonfromcsv.map((student, index)=>{
+                                    return <tr key={index}>
+                                        <td>{index+1}</td>
+                                        <td>
+                                            <input type="text" onChange={(e)=>{ 
+                                                let jsonfromcsv = [... this.state.jsonfromcsv];
+                                                jsonfromcsv[index].student = e.target.value;
+                                                this.setState({jsonfromcsv});
+                                            }} 
+                                    className="form-control form-control-sm"  value={student.student}/></td>
+                                        <td>
+                                            <input type="text" onChange={(e)=>{ 
+                                                let jsonfromcsv = [... this.state.jsonfromcsv];
+                                                jsonfromcsv[index].phone = e.target.value;
+                                                this.setState({jsonfromcsv});
+                                            }} className="form-control form-control-sm"  value={student.phone}/></td>
+                                        <td>
+                                            <input type="text" onChange={(e)=>{ 
+                                                let jsonfromcsv = [... this.state.jsonfromcsv];
+                                                jsonfromcsv[index].address = e.target.value;
+                                                this.setState({jsonfromcsv});
+                                            }} className="form-control form-control-sm"  value={student.address}/></td>
+                                        <td>
+                                            <input type="text" onChange={(e)=>{ 
+                                                let jsonfromcsv = [... this.state.jsonfromcsv];
+                                                jsonfromcsv[index].dob = e.target.value;
+                                                this.setState({jsonfromcsv});
+                                            }} className="form-control form-control-sm"  value={student.dob}/></td>
+                                        <td>
+                                            <select onChange={(e)=>{ 
+                                                let jsonfromcsv = [... this.state.jsonfromcsv];
+                                                jsonfromcsv[index].grade = e.target.value;
+                                                this.setState({jsonfromcsv});
+                                            }} className="form-control form-control-sm my-auto" defaultValue="none">
+                                            <option value="none" disabled hidden>{student.grade}</option> 
+                                                {
+                                                this.state.grades.map((items, key) => 
+                                                    <option key={key} value={items.name}>{items.name}</option>
+                                                )}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                })
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+        </div>
         return <div className="container">
         <div className="container">
         <nav className="navbar navbar-expand-md navbar-light bg-light my-2">
@@ -414,12 +499,13 @@ export default class AdminInput extends Component{
                 <ul className="navbar-nav mr-auto">
                     <li> <button className="btn btn-sm mx-4" onClick={this.edit_student_clicked}>Edit Student Details</button></li>
                     <li> <button className="btn btn-sm mx-4" onClick={this.edit_student_subject_clicked}>Edit Student Subject</button></li> 
+                    <li> <button className="btn btn-sm mx-4" onClick={this.import_from_csv}>Import Student from CSV</button></li> 
                 </ul>
             </div>    
         </nav>
     </div>
     { console.log('Admin Input: ')}
-    {(this.state.display == 1)?studentsedit:(this.state.display == 2)?subjectsedit:null}
+    {(this.state.display == 1)?studentsedit:(this.state.display == 2)?subjectsedit:(this.state.display == 3)?importfromcsv:null}
     
 </div>
     }

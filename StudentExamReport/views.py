@@ -299,3 +299,25 @@ def updateSubjectTeacher(request):
     subject = Subject.objects.all().order_by('code')
     serialized_subject = SubjectSerializer(subject, many=True)
     return Response(serialized_subject.data)
+
+
+@api_view(['POST'])
+def addStudentToSubject(request):
+    StudentSubject.objects.update_or_create(
+        student = Student.objects.get(pk=request.data.get('student')),
+        subject = Subject.objects.get(pk=request.data.get('subject')['id']),
+        defaults={'optional': False},
+    )
+    studentsubject = StudentSubject.objects.all()
+    serialized_studentsubject = StudentSubjectSerializer(studentsubject, many=True)
+    return Response(serialized_studentsubject.data)
+
+
+@api_view(['POST'])
+def deleteStudentFromSubject(request):
+    instance = StudentSubject.objects.get(student=request.data.get('student'), subject= request.data.get('subject'))
+    if(instance):
+        instance.delete()
+    studentsubject = StudentSubject.objects.all()
+    serialized_studentsubject = StudentSubjectSerializer(studentsubject, many=True)
+    return Response(serialized_studentsubject.data)

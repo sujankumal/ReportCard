@@ -136,3 +136,17 @@ margin-left: 4px;
 .table{
   background-color: white;
 }
+.studentsearcheditsubjectstudent{
+  background-color: #cccccc !important;
+  height: 200px !important;
+  border-color: #999999 !important;
+  font-size: small !important;
+}
+.studentsearcheditsubjectstudent table{
+  background-color: #cccccc !important;
+  color: #333333;
+}
+.studentsearcheditsubjectstudent table thead{
+  background-color:rgb(146, 146, 146);
+  color: #444;
+}

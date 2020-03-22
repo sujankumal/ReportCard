@@ -38,4 +38,6 @@ urlpatterns = [
     path('updateStudentDOB/',views.updateStudentDOB),
     path('updateStudentGrade/',views.updateStudentGrade),
     path('updateSubjectTeacher/',views.updateSubjectTeacher),
+    path('addStudentToSubject/', views.addStudentToSubject),
+    path('deleteStudentFromSubject/', views.deleteStudentFromSubject),
 ]

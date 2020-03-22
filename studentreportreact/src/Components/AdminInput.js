@@ -72,10 +72,13 @@ export default class AdminInput extends Component{
         })
     }
     student_selected(e){
+        let target = e.target;
+        let value = target.attributes.value.value;
         this.setState({
-            studentvalue: e.target.attributes.value.value,
+            studentvalue: value,
         });
-        this.filterstudentsinputid.current.placeholder = this.state.students.find(std=>std.id == e.target.attributes.value.value).student_name;
+        this.addStudentToSubject(target, value);
+        this.filterstudentsinputid.current.placeholder = this.state.students.find(std=>std.id == value).student_name;
     }
     filterStudents(e){
         let target = e.target;
@@ -102,7 +105,53 @@ export default class AdminInput extends Component{
             }
         );
     }
-    
+    async addStudentToSubject(event, subject){
+        let target = event.target;
+        let value = target.attributes.value.value;
+        this.setState({
+            studentvalue: value,
+        });
+        this.filterstudentsinputid.current.placeholder = this.state.students.find(std=>std.id == value).student_name;
+        if (value == ''){
+            return
+        }
+        // event.target.value = null;
+        let header = await this.props.auth_headers();
+        header['Content-Type'] = 'application/json';
+        await fetch(HOST+'/addStudentToSubject/', {
+            method: 'POST', headers: header , body:JSON.stringify({
+                'student': value,
+                'subject': subject,
+                }),
+            })
+            .then(res => { if(res.status == 400){toast.error('Bad Request');return}
+                if(res.status == 401){toast.error('Unauthorized');return}
+                if(res.status == 403){toast.error('Forbidden');return}
+                return res.json();
+            })
+            .then((data) => {this.setState({studentsubject:data});
+            }).catch(function(error) {toast.error("Something went Wrong!");});
+    }
+    async deleteStudentFromSubject(student, subject){
+        
+        // event.target.value = null;
+        let header = await this.props.auth_headers();
+        header['Content-Type'] = 'application/json';
+        await fetch(HOST+'/deleteStudentFromSubject/', {
+            method: 'POST', headers: header , body:JSON.stringify({
+                'student': student,
+                'subject': subject,
+                }),
+            })
+            .then(res => { if(res.status == 400){toast.error('Bad Request');return}
+                if(res.status == 401){toast.error('Unauthorized');return}
+                if(res.status == 403){toast.error('Forbidden');return}
+                return res.json();
+            })
+            .then((data) => {this.setState({studentsubject:data});
+            }).catch(function(error) {toast.error("Something went Wrong!");});
+    }
+
     async updateStudentName(event, student){
         let value = event.target.value;
         if (value == ''){
@@ -275,12 +324,12 @@ export default class AdminInput extends Component{
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Search and Add"
                         onKeyUp={(e)=>this.filterStudents(e)} ref={this.filterstudentsinputid} />
                         <span className="input-group-text" disabled><FontAwesomeIcon icon={faSearch} /></span>
-                        <div  className="dropdown-menu overflow-auto" style={{height: 200 + 'px'}} >
+                        <div  className="dropdown-menu overflow-auto studentsearcheditsubjectstudent" style={{height: 200 + 'px'}} >
                             <table className="table table-bordered table-striped table-hover table-sm">
                                 <thead><tr><td>Students Name</td></tr></thead>
                                 <tbody ref = {this.filterstudentslist}>{
                                 this.state.students.map((items, key) => 
-                                <tr key={key} value={items.id}><td onClick={ (e)=>this.student_selected(e)} value={items.id}>{items.student_name}</td></tr>
+                                <tr key={key} value={items.id}><td onClick={ (e)=>this.addStudentToSubject(e, )} value={items.id}>{items.student_name}</td></tr>
                                 )
                                 }</tbody>
                             </table>
@@ -307,12 +356,33 @@ export default class AdminInput extends Component{
                                     )}
                                 </select>
                                 </td>
-                                <td className="width-60">{student_search} {
+                                <td className="width-60">
+                                    <div className = "container">
+                                        <div className="btn-group mx-auto my-auto">
+                                            <div className="form-inline input-group input-group-sm dropdown mx-2">
+                                                    <input type="text" className="form-control dropdown-toggle  my-auto" 
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Search and Add"
+                                                    onKeyUp={(e)=>this.filterStudents(e)} ref={this.filterstudentsinputid} />
+                                                    <span className="input-group-text" disabled><FontAwesomeIcon icon={faSearch} /></span>
+                                                    <div  className="dropdown-menu overflow-auto studentsearcheditsubjectstudent" style={{height: 200 + 'px'}} >
+                                                        <table className="table table-bordered table-striped table-hover table-sm">
+                                                            <thead><tr><td>Students Name</td></tr></thead>
+                                                            <tbody ref = {this.filterstudentslist}>{
+                                                            this.state.students.map((items, key) =>{
+                                                                
+                                                               return (items.student_grade == subject.grade)?<tr key={key} value={items.id}><td onClick={ (e)=>this.addStudentToSubject(e, subject)} value={items.id}>{items.student_name}</td></tr>:null
+                                                            })
+                                                            }</tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div> {
                                     this.state.studentsubject.map((studentsubject, ind)=>{
                                         if(studentsubject.subject == subject.id){
                                             return <span className="mx-1 btn-group btn-sm subjectstudentspan" key={ind}>
                                                 {this.state.students.find(student=>student.id == studentsubject.student).student_name}
-                                                <button className="btn btn-sm d-flex"><FontAwesomeIcon icon={faTimes} color="red"/></button>
+                                                <button className="btn btn-sm d-flex"><FontAwesomeIcon icon={faTimes} color="red" onClick={()=>this.deleteStudentFromSubject(studentsubject.student, subject.id)}/></button>
                                             </span>
                                         }
                                     })    

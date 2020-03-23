@@ -150,3 +150,17 @@ margin-left: 4px;
   background-color:rgb(146, 146, 146);
   color: #444;
 }
+.react-csv-input{
+    background-color: white;
+    margin-bottom: 8px;
+}
+.react-csv-input label{
+    display: block;
+}
+.react-csv-input input{
+    margin-bottom: 8px;
+    padding: 4px;
+    border-style:outset;
+    border-width: 1px;
+    border-color: #cccccc;
+}

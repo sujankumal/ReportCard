@@ -298,6 +298,38 @@ export default class AdminInput extends Component{
             }).catch(function(error) {toast.error("Something went Wrong!");});
 
     }
+    async uploadStudentInformation(){
+        let header = await this.props.auth_headers();
+        header['Content-Type'] = 'application/json';
+        toast.info('Please Wait. This may take some time.', {autoClose:false, toastId:'studentuploadinfo'})
+        await fetch(HOST+'/uploadStudentInformation/', {
+            method: 'POST', headers: header , body:JSON.stringify({
+                'jsonfromcsv': this.state.jsonfromcsv,
+                }),
+            })
+            .then(res => { 
+                toast.dismiss('studentuploadinfo');
+                if(res.status == 400){toast.error('Bad Request');return}
+                if(res.status == 401){toast.error('Unauthorized');return}
+                if(res.status == 403){toast.error('Forbidden');return}
+                if(res.status == 409){
+                    toast.error(res.statusText);
+                }
+                return res.json();
+            })
+            .then((data) => {
+                if(data.exception){
+                    toast.warn(data.exception[0]+' Total Processed: '+data.processed, {autoClose:6000});
+                    this.setState({students:data.students, jsonfromcsv:[]});
+                    return
+                }
+                this.setState({students:data, jsonfromcsv:[]});
+                toast.success("Student data upload Completed");
+            }).catch(()=> {
+                this.setState({students:[], jsonfromcsv:[]});
+                toast.error("Something went Wrong!");
+            });
+    }
     render(){
         let studentsedit = <div className="container">
             <table className= "table table-bordered table-responsive table-hover table-sm">
@@ -405,7 +437,7 @@ export default class AdminInput extends Component{
         let importfromcsv = <div className="container">
                 <div className="inputfile">
                     <CSVReader cssClass="react-csv-input"
-                            label="Select CSV with Student's information"
+                            label="Select CSV with Student's information and header as the table header without SN"
                             onFileLoaded={(data, fileInfo) => {
                                 let title = [];
                                 title = data[0];
@@ -425,13 +457,15 @@ export default class AdminInput extends Component{
                                 }} />
                     
                 </div>
-                <div className="container">
                     {
-                        <table className= "table table-bordered table-responsive table-hover table-sm">
+                        <table className= "table table-bordered table-hover table-sm">
                         <tbody>
                             <tr><td>SN</td><td>student</td><td>phone</td><td>address</td><td>dob</td><td>grade</td></tr>
                             {
                             this.state.jsonfromcsv.map((student, index)=>{
+                                    if (student.student == undefined || student.student == ""){
+                                        return null
+                                    }
                                     return <tr key={index}>
                                         <td>{index+1}</td>
                                         <td>
@@ -476,9 +510,13 @@ export default class AdminInput extends Component{
                                 })
                                 }
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colSpan="5">{(this.state.jsonfromcsv.length>0)?<button className="btn btn-outline-success btn-sm" onClick={() => this.uploadStudentInformation()}>Upload</button>:'Select students csv from above'}</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     }
-                </div>
         </div>
         return <div className="container">
         <div className="container">

@@ -40,4 +40,5 @@ urlpatterns = [
     path('updateSubjectTeacher/',views.updateSubjectTeacher),
     path('addStudentToSubject/', views.addStudentToSubject),
     path('deleteStudentFromSubject/', views.deleteStudentFromSubject),
+    path('uploadStudentInformation/', views.uploadStudentInformation),
 ]

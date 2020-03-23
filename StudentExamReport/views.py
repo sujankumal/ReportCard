@@ -270,7 +270,7 @@ def updateStudentAddress(request):
 @api_view(['POST'])
 def updateStudentDOB(request):
     Student.objects.update_or_create(
-        date_of_birth = request.data.get('student')['date_of_birth'],
+        phone = request.data.get('student')['phone'], 
         student_name = request.data.get('student')['student_name'], 
         defaults={'date_of_birth': request.data.get('date_of_birth')},
     )
@@ -321,3 +321,30 @@ def deleteStudentFromSubject(request):
     studentsubject = StudentSubject.objects.all()
     serialized_studentsubject = StudentSubjectSerializer(studentsubject, many=True)
     return Response(serialized_studentsubject.data)
+
+
+@api_view(['POST'])
+def uploadStudentInformation(request):
+    students = request.data.get('jsonfromcsv')
+    count = 0
+    for student in students:
+        try:
+            if (student['student'] == 'undefined' or student['student'] == '' ):
+                continue
+                
+            Student.objects.update_or_create(
+                phone = student['phone'], 
+                student_name = student['student'],
+                student_grade = Grade.objects.get(name__iexact=student['grade']),
+                defaults={'date_of_birth': student['dob'], 'address' : student['address']},
+            )
+            count+=1
+        except Exception as e:
+            students = Student.objects.all().order_by('student_name')
+            serialized_students = StudentSerializer(students, many=True)
+            
+            return Response({'processed':count,'exception':e, 'students':serialized_students.data}, status = 409)
+
+    students = Student.objects.all().order_by('student_name')
+    serialized_students = StudentSerializer(students, many=True)
+    return Response(serialized_students.data)

@@ -13,7 +13,9 @@ from rest_framework.views import APIView
 from StudentExamReport.forms import LoginForm
 from .serializers import UserSerializer, GradeSerializer,StudentSerializer, SubjectSerializer, ExamSerializer, ResultSerializer, ResultCommentSerializer, StudentSubjectSerializer
 from .models import Exam, Grade, Subject, Student, StudentSubject, Result, ResultComment
-
+import os
+import logging
+from django.conf import settings
 # Create your views here.
 
 @api_view(['GET'])
@@ -31,9 +33,21 @@ def is_admin(request):
     """
     return Response(request.user.is_superuser)
         
-@login_required(login_url='StudentExamReport:user_login')
-def index(request):
-    return render(request,'StudentExamReport/index.html')
+
+
+def index(request): 
+    print (os.path.join(settings.STATIC_BUILD, 'index.html'))
+    try:
+        with open(os.path.join(settings.STATIC_BUILD, 'index.html')) as f:
+            return HttpResponse(f.read())
+    except FileNotFoundError:
+        logging.exception('Production build of app not found')
+        return HttpResponse(
+            """
+            Page Not Found
+            """,
+            status=501,
+        )
 
 
 def user_login(request):

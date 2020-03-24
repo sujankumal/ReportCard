@@ -63,14 +63,13 @@ class StudentResult extends Component{
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                  
                 return res.json();
             })
             .then((data) => {
                 this.setState({grades:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ typeof(error)+ error);
             });
     }
     async teacher_get_exams(){
@@ -92,15 +91,15 @@ class StudentResult extends Component{
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                  
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.setState({exams:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
     async get_all_students(){
@@ -122,15 +121,15 @@ class StudentResult extends Component{
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                  
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.setState({students:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
 
@@ -154,11 +153,11 @@ class StudentResult extends Component{
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                  
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 if(exammulti == 0){
                     this.setState({studentresults:data});
                 }else if(exammulti == 1){
@@ -170,7 +169,7 @@ class StudentResult extends Component{
                 }
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
 
@@ -193,15 +192,15 @@ class StudentResult extends Component{
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                  
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.setState({gradesubjects:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
     
@@ -224,14 +223,14 @@ class StudentResult extends Component{
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                  
                 return res.json();
             })
             .then((data) => {
                 this.setState({resultcomments: data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
     async update_result_comment(e, student, exam){
@@ -264,14 +263,14 @@ class StudentResult extends Component{
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                  
                 return res.json();
             })
             .then((data) => {
                 this.setState({resultcomments: data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
         
     }
@@ -307,9 +306,9 @@ class StudentResult extends Component{
             studentresultsmulti3:[],
         });
         this.filterstudentsinputid.current.placeholder = this.state.students.find(std=>std.id == e.target.attributes.value.value).student_name;
-        console.log(
-            (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-            );
+        if(this.examselectRef.current){
+            this.examselectRef.current.selectedIndex=0
+        }
     }
     filterStudents(e){
         let filter = e.target.value.toUpperCase();
@@ -393,11 +392,12 @@ class StudentResult extends Component{
             finalreportclicked:false,
             gradestudentfinalreportclicked:false,
         });
-        console.log(
-            (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
-            (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-            // (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-            );
+            if(this.gradeselectRef.current){
+                this.gradeselectRef.current.selectedIndex=0
+            }
+            if(this.examselectRef.current){
+                this.examselectRef.current.selectedIndex=0
+            }
     }
     grade_student_result_clicked = () =>{
         this.setState({
@@ -412,11 +412,15 @@ class StudentResult extends Component{
             finalreportclicked:false,
             gradestudentfinalreportclicked:false,
         });
-        console.log(
-            (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
-            (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-            (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-            );
+            if(this.gradeselectRef.current){
+                this.gradeselectRef.current.selectedIndex=0
+            }
+            if(this.examselectRef.current){
+                this.examselectRef.current.selectedIndex=0
+            }
+            if(this.examselectRef.current){
+                this.examselectRef.current.selectedIndex=0
+            }
     }
     final_report_clicked=()=>{
         this.setState({
@@ -444,7 +448,6 @@ class StudentResult extends Component{
             finalreportclicked:true,
             gradestudentfinalreportclicked:false,
         });
-        console.log("Final report");
     }
     grade_student_final_report_clicked=()=>{
         this.setState({
@@ -473,14 +476,12 @@ class StudentResult extends Component{
             gradestudentfinalreportclicked:true,
             
         });
-        console.log("all student Final report");
     }
 
     resultcomment=(student, exam)=>{
         let val = this.state.resultcomments.find(
             comment=> comment.student == student && comment.exam == exam
         );
-        // console.log("hell", val.result_comment);
         return (val)?val.result_comment:'';
     }
 
@@ -504,18 +505,18 @@ class StudentResult extends Component{
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                  
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 // payload = data;
                 this.setState({
                     [index]:data,
                 });
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
             // return payload;
     }
@@ -540,18 +541,18 @@ class StudentResult extends Component{
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                  
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 // payload = data;
                 this.setState({
                     [index]:data,
                 });
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
             // return payload;
     }
@@ -575,7 +576,7 @@ class StudentResult extends Component{
                                     
                     let data = <div className="container mt-2" key={index}>
                         <div className="container result">
-                        <div><img src="/schoolHeader.jpg"/></div>
+                        <div><img src="/media/schoolHeader.jpg"/></div>
                     <div><h3>Exam Report: {exam_title}</h3></div>
                     <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
@@ -590,7 +591,6 @@ class StudentResult extends Component{
                                 : this.resultcomment(student.id, exam)
                             }</td>
                         </tr>
-                        {console.log("stateindex",results, stateindex)}
                         {(results[index])?results[index].map((result,ind)=>{
                             if(this.state.gradesubjects.find(subject=> subject.id==result.subject)){
                                 let theory = Math.round(0.6*parseFloat(result.mark));
@@ -642,7 +642,7 @@ class StudentResult extends Component{
                 let count = 0;
                                 
                 return (<div className="container mt-2"><div className="container result">
-                    <div><img src="/schoolHeader.jpg"/></div>
+                    <div><img src="/media/schoolHeader.jpg"/></div>
                     <div><h3>Exam Report: {exam_title}</h3></div>
                 <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
@@ -726,7 +726,7 @@ class StudentResult extends Component{
             
             return <div className="container">
                 <div className="report">
-                <div><img src="/schoolHeader.jpg"/></div>
+                <div><img src="/media/schoolHeader.jpg"/></div>
                     <div><h3>Progress Report</h3></div>
                     <div className="row text-left">
                         <div className="col-md-5" ><b className="mx-4">Name:{student.student_name}</b></div>
@@ -815,7 +815,7 @@ class StudentResult extends Component{
                 
                 let data = <div className="container mt-2" key={index}>
                 <div className="report">
-                <div><img src="/schoolHeader.jpg"/></div>
+                <div><img src="/media/schoolHeader.jpg"/></div>
                     <div><h3>Progress Report</h3></div>
                     <div className="row text-left">
                         <div className="col-md-5" ><b className="mx-4">Name:{student.student_name}</b></div>
@@ -836,7 +836,7 @@ class StudentResult extends Component{
                                             let res1 = this.state[stateindex1].find(res=> res.student == student.id && res.subject == subject.id);
                                             let res2 = this.state[stateindex2].find(res=> res.student == student.id && res.subject == subject.id); 
                                             let res3 = this.state[stateindex3].find(res=> res.student == student.id && res.subject == subject.id);
-                                            console.log(res1,res2,res3);
+                                            
                                             if(!res1) res1= {};
                                             if(!res2) res2= {};
                                             if(!res3) res3= {};
@@ -1007,7 +1007,6 @@ class StudentResult extends Component{
                     </div>    
                 </nav>
             </div>
-            { console.log('com: ', this.state.studentresultclicked)}
             {(this.state.studentresultclicked || this.state.gradestudentresultclicked)?this.result_table():null}
             {(this.state.finalreportclicked)?this.student_report_table():null}
             {(this.state.gradestudentfinalreportclicked)?this.grade_student_report_table():null}

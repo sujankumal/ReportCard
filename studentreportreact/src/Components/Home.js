@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { toast, Slide } from 'react-toastify';
+import { toast } from 'react-toastify';
 import {HOST} from './constants';
 class Home extends Component {
     constructor(props){
@@ -44,14 +44,13 @@ class Home extends Component {
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                 
                 return res.json();
             })
             .then((data) => {
                 this.setState({grades:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ typeof(error)+ error);
             });
     }
     async teacher_get_subjects_by_grade(grade){
@@ -73,15 +72,15 @@ class Home extends Component {
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                 
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.setState({subjects:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
 
@@ -110,15 +109,15 @@ class Home extends Component {
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                 
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.setState({studentsresult:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
     
@@ -141,15 +140,15 @@ class Home extends Component {
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                 
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.setState({students:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
 
@@ -173,15 +172,15 @@ class Home extends Component {
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                 
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.setState({gradestudents:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
 
@@ -204,15 +203,15 @@ class Home extends Component {
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                 
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.setState({exams:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
 
@@ -236,15 +235,15 @@ class Home extends Component {
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                 
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.setState({results:data});
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
     componentDidMount(){
@@ -267,12 +266,16 @@ class Home extends Component {
         });
         this.teacher_get_subjects_by_grade(event.target.value);
         this.teacher_get_students_by_grade(event.target.value);
-        console.log((this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'',
-        (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'');
-        
+
+
+        if(this.subjectselectRef.current){
+            this.subjectselectRef.current.selectedIndex=0
+        }
+        if(this.examselectRef.current){
+            this.examselectRef.current.selectedIndex=0
+        }
     }
     subject_selected(event){
-        console.log(event.target.value);
         this.setState({
             subjectvalue:event.target.value,
         });
@@ -280,7 +283,6 @@ class Home extends Component {
         this.teacher_get_students_marks();
     }
     student_selected(event){
-        console.log(event.target.value);
         this.setState({studentvalue:event.target.value});
     }
     exam_selected(event){
@@ -304,7 +306,10 @@ class Home extends Component {
                 toast.warn('Please Select Grade');
             }
         }
-        console.log((this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'');
+        
+        if(this.subjectselectRef.current){
+            this.subjectselectRef.current.selectedIndex=0
+        }
     }
     
     async teachers_update_marks(event){
@@ -312,7 +317,6 @@ class Home extends Component {
         let marks = event.target.value;
         event.target.value = null;
         if(!marks){
-            console.log('Marks null');
             return;
         }
         let header = await this.props.auth_headers();
@@ -345,15 +349,15 @@ class Home extends Component {
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                 
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.teacher_get_students_marks();
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
     async teachers_update_cas(event){
@@ -361,7 +365,6 @@ class Home extends Component {
         let cas = event.target.value;
         event.target.value = null;
         if(!cas){
-            console.log('CAS null');
             return;
         }
         let header = await this.props.auth_headers();
@@ -394,15 +397,15 @@ class Home extends Component {
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                 
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.teacher_get_students_marks();
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
     async teachers_update_comment(event){
@@ -411,7 +414,6 @@ class Home extends Component {
         event.target.value = null;
         let val = this.state.studentsresult.find(res=> res.student == student); 
         if(!comment){
-            console.log('Comment null');
             return;
         }
         let header = await this.props.auth_headers();
@@ -443,15 +445,15 @@ class Home extends Component {
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
+                 
                 return res.json();
             })
             .then((data) => {
-                console.log(data);
+                  
                 this.teacher_get_students_marks();
             }).catch(function(error) {
                 toast.error("Something went Wrong!");
-                console.log("error:"+ error);
+                  
             });
     }
     find_st_mark=(items)=>{
@@ -494,33 +496,17 @@ class Home extends Component {
             studnetresultclicked:false,
             classmarksclicked:false,
         });
-        console.log(
-            (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
-            (this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'',
-            (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-            );
+        if(this.gradeselectRef.current){
+            this.gradeselectRef.current.selectedIndex=0;
+        }
+        if(this.subjectselectRef.current){
+            this.subjectselectRef.current.selectedIndex=0
+        }
+        if(this.examselectRef.current){
+            this.examselectRef.current.selectedIndex=0
+        }
     }
     student_result_clicked=()=>{
-        // this.setState({
-        //     // grades:[],
-        //     // students:[],
-        //     // subjects:[],
-        //     // exams:[],
-        //     // results:[],
-        //     // studentsresult:[],
-        //     gradevalue:'',
-        //     studentvalue:'',
-        //     subjectvalue:'',
-        //     examvalue:'',
-        //     inputresultclicked:false,
-        //     studnetresultclicked:true,
-        //     classmarksclicked:false,
-        // });
-        // console.log(
-        //     (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
-        //     (this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'',
-        //     (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-        //     );
         this.props.show_result();
     }
     class_marks_clicked=()=>{
@@ -539,11 +525,15 @@ class Home extends Component {
             studnetresultclicked:false,
             classmarksclicked:true,
         });
-        console.log(
-            (this.gradeselectRef.current)?this.gradeselectRef.current.selectedIndex=0:'',
-            (this.subjectselectRef.current)?this.subjectselectRef.current.selectedIndex=0:'',
-            (this.examselectRef.current)?this.examselectRef.current.selectedIndex=0:'',
-            );
+        if(this.gradeselectRef.current){
+            this.gradeselectRef.current.selectedIndex=0;
+        }
+        if(this.subjectselectRef.current){
+            this.subjectselectRef.current.selectedIndex=0
+        }
+        if(this.examselectRef.current){
+            this.examselectRef.current.selectedIndex=0
+        }
     }
     render(){
         let subject_select = <li className="btn-group mx-2">

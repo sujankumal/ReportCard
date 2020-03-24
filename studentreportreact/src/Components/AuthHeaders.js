@@ -24,7 +24,6 @@ export const refresh_token = async() => {
       })
       .then(res => res.json())
       .then(json => {
-          console.log(json)
           if(json.non_field_errors){
               toast.error("Couldn't Refresh. Something Went Wrong.");  
               return;

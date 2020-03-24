@@ -47,7 +47,6 @@ export default class AdminInput extends Component{
                     toast.error('Forbidden');
                     return
                 }
-                console.log(res);
                 return res.json();
             })
             .then((data) => {
@@ -542,7 +541,6 @@ export default class AdminInput extends Component{
             </div>    
         </nav>
     </div>
-    { console.log('Admin Input: ')}
     {(this.state.display == 1)?studentsedit:(this.state.display == 2)?subjectsedit:(this.state.display == 3)?importfromcsv:null}
     
 </div>

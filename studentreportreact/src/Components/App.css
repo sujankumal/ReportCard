@@ -36,16 +36,12 @@
     transform: rotate(360deg);
   }
 }
-	/* Made with love by Mutiullah Samim*/
-
-@import url('https://fonts.googleapis.com/css?family=Numans');
 
 html,body{
 /* background-image: url('http://getwallpapers.com/wallpaper/full/a/5/d/544750.jpg'); */
 background-color: #cccccc !important;
 background-size: cover;
 height: 100%;
-font-family: 'Numans', sans-serif;
 }
 
 .container{

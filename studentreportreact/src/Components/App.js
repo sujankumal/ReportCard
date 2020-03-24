@@ -66,7 +66,6 @@ class App extends Component{
       body: JSON.stringify(data)
     })
       .then(res => {
-        console.log(res);
         if(res.status === 401){
           return -1;
         }
@@ -124,7 +123,6 @@ class App extends Component{
   };
   
   display_home = ()=>{
-    console.log('home');
     this.setState(
       {
         displayed_form: 'Home'
@@ -153,7 +151,6 @@ class App extends Component{
               toast.error("Couldn't Refresh. Something Went Wrong.");  
               return;
           }
-          console.log('refreshed '+json.access);
           this.setState({access_token:json.access});
           return json.access;
         })
@@ -184,7 +181,6 @@ class App extends Component{
         })
       .then(res => res.json())
       .then(json => {
-        console.log(json);
         this.setState({ is_admin: json });
       });
   }

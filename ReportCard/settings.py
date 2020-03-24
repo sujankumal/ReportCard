@@ -15,8 +15,6 @@ from datetime import timedelta
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
-STATIC_DIR = os.path.join(BASE_DIR, "static")
-MEDIA_DIR = os.path.join(BASE_DIR, "media")
 
 
 # Quick-start development settings - unsuitable for production
@@ -103,7 +101,7 @@ ROOT_URLCONF = 'ReportCard.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -167,7 +165,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [STATIC_DIR]
+REACT_APP_DIR = os.path.join(BASE_DIR, 'studentreportreact')
+STATIC_BUILD = os.path.join(REACT_APP_DIR, 'build')
+STATIC_STATIC = os.path.join(STATIC_BUILD, 'static')
+STATICFILES_DIRS = [STATIC_BUILD, STATIC_STATIC]
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = MEDIA_DIR
+MEDIA_DIR = [STATIC_BUILD,]
+MEDIA_URL = ''
+MEDIA_ROOT = STATIC_BUILD

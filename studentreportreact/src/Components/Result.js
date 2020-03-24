@@ -4,7 +4,7 @@ import {HOST} from './constants';
 import {calculategrade} from './calculategrade';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch} from '@fortawesome/free-solid-svg-icons';
-
+import schoolHeader from '../schoolHeader.jpg'
 class StudentResult extends Component{
 
     constructor(props){
@@ -576,7 +576,7 @@ class StudentResult extends Component{
                                     
                     let data = <div className="container mt-2" key={index}>
                         <div className="container result">
-                        <div><img src="/media/schoolHeader.jpg"/></div>
+                        <div><img src={schoolHeader} /></div>
                     <div><h3>Exam Report: {exam_title}</h3></div>
                     <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
@@ -642,7 +642,7 @@ class StudentResult extends Component{
                 let count = 0;
                                 
                 return (<div className="container mt-2"><div className="container result">
-                    <div><img src="/media/schoolHeader.jpg"/></div>
+                    <div><img src={schoolHeader} /></div>
                     <div><h3>Exam Report: {exam_title}</h3></div>
                 <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
@@ -726,7 +726,7 @@ class StudentResult extends Component{
             
             return <div className="container">
                 <div className="report">
-                <div><img src="/media/schoolHeader.jpg"/></div>
+                <div><img src={schoolHeader} /></div>
                     <div><h3>Progress Report</h3></div>
                     <div className="row text-left">
                         <div className="col-md-5" ><b className="mx-4">Name:{student.student_name}</b></div>
@@ -815,7 +815,7 @@ class StudentResult extends Component{
                 
                 let data = <div className="container mt-2" key={index}>
                 <div className="report">
-                <div><img src="/media/schoolHeader.jpg"/></div>
+                <div><img src={schoolHeader} /></div>
                     <div><h3>Progress Report</h3></div>
                     <div className="row text-left">
                         <div className="col-md-5" ><b className="mx-4">Name:{student.student_name}</b></div>

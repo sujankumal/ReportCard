@@ -164,3 +164,39 @@ margin-left: 4px;
     border-width: 1px;
     border-color: #cccccc;
 }
+
+@media only screen and (max-width: 570px) {
+    .container {
+      max-width: 570px !important;
+      padding: 0px 4px 4px 4px !important;
+      font-size: 8pt !important;
+    }
+    .grade_to_gpa{
+        font-size: 8pt !important;
+    }
+    h3, .col-md-6, .col-md-5 {
+        font-size: 8pt !important;
+    }
+    .signature-div div{
+        max-width: 50% !important;
+    }
+    
+    .signature-div span{
+        max-width: 50% !important;
+    }
+    .dropdown-toggle{
+        font-size: 8pt !important;
+        margin: 2px 2px 4px 2px !important;
+
+    }
+    table{
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+  }
+  img{  
+  max-width: 100%;
+  height: auto;
+  }

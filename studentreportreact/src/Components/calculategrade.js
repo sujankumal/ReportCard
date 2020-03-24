@@ -16,6 +16,6 @@ export const calculategrade = (marks) =>{
     }else if(marks>=20 && marks<=29 ){
         return {'grade':'D','gpa': '1.2'}
     }else{
-        return {'grade':'E','gpa': "FAIL"}
+        return {'grade':'E','gpa': "0.8"}
     }   
 }

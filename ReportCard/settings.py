@@ -24,7 +24,8 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 SECRET_KEY = 'ezorc-hf3^nvz^x(n^m=zob+rbqr$_e5^ovg-mxn*+vst$pvgy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['192.168.1.67','localhost']
 
@@ -165,10 +166,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 REACT_APP_DIR = os.path.join(BASE_DIR, 'studentreportreact')
 STATIC_BUILD = os.path.join(REACT_APP_DIR, 'build')
 STATIC_STATIC = os.path.join(STATIC_BUILD, 'static')
-STATICFILES_DIRS = [STATIC_BUILD, STATIC_STATIC]
+STATICFILES_DIRS = [STATIC_STATIC]
 
 
 MEDIA_DIR = os.path.join(STATIC_STATIC, "media")

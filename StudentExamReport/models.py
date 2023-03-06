@@ -17,7 +17,7 @@ class Student(models.Model):
     student_name = models.CharField("Student Name",max_length=100)
     date_of_birth = models.DateField("Date Of Birth")
     address = models.CharField(max_length=100)
-    phone = models.IntegerField("Phone Number")
+    phone = models.CharField("Phone Number", max_length=15)
     student_grade = models.ForeignKey("Grade", on_delete=models.PROTECT, verbose_name="Student's Class")
 
     

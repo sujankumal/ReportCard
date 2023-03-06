@@ -25,7 +25,7 @@ SECRET_KEY = 'ezorc-hf3^nvz^x(n^m=zob+rbqr$_e5^ovg-mxn*+vst$pvgy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.1.67','localhost']
 
@@ -121,11 +121,21 @@ WSGI_APPLICATION = 'ReportCard.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'reportcard',
+            'USER': 'vagrant',
+            'PASSWORD': 'vagrant',
+            'HOST': '192.168.121.44',
+            'PORT': '5432',
+        }
 }
 
 

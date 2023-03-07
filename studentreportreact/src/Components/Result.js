@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { toast, Slide } from 'react-toastify';
+import { toast } from 'react-toastify';
 import {HOST} from './constants';
 import {calculategrade} from './calculategrade';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -576,7 +576,7 @@ class StudentResult extends Component{
                                     
                     let data = <div className="container mt-2" key={index}>
                         <div className="container result">
-                        <div><img src={schoolHeader} /></div>
+                        <div><img alt="" src={schoolHeader} /></div>
                     <div><h3>Exam Report: {exam_title}</h3></div>
                     <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
@@ -642,7 +642,7 @@ class StudentResult extends Component{
                 let count = 0;
                                 
                 return (<div className="container mt-2"><div className="container result">
-                    <div><img src={schoolHeader} /></div>
+                    <div><img alt="" src={schoolHeader} /></div>
                     <div><h3>Exam Report: {exam_title}</h3></div>
                 <table className="table table-bordered table-striped table-hover table-sm">
                     <tbody>
@@ -726,7 +726,7 @@ class StudentResult extends Component{
             
             return <div className="container">
                 <div className="report">
-                <div><img src={schoolHeader} /></div>
+                <div><img alt="" src={schoolHeader} /></div>
                     <div><h3>Progress Report</h3></div>
                     <div className="row text-left">
                         <div className="col-md-5" ><b className="mx-4">Name:{student.student_name}</b></div>
@@ -815,7 +815,7 @@ class StudentResult extends Component{
                 
                 let data = <div className="container mt-2" key={index}>
                 <div className="report">
-                <div><img src={schoolHeader} /></div>
+                <div><img alt="" src={schoolHeader} /></div>
                     <div><h3>Progress Report</h3></div>
                     <div className="row text-left">
                         <div className="col-md-5" ><b className="mx-4">Name:{student.student_name}</b></div>
@@ -859,6 +859,9 @@ class StudentResult extends Component{
                                                 <td>{gpa.grade}</td>
 
                                             </tr>
+                                        }
+                                        else{
+                                            return<tr><td></td></tr>;
                                         }
                                     })
                                 }
@@ -1017,9 +1020,9 @@ class StudentResult extends Component{
 
 class AllStudentResult extends Component{
 
-    constructor(props){
-        super(props);
-    }
+    // constructor(props){
+    //     super(props);
+    // }
     render(){
 
         return <div></div>

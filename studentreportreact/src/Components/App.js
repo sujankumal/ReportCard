@@ -20,7 +20,7 @@ toast.configure({
 class App extends Component{
   constructor(props){
     super(props);
-    const refresh_token = null;
+    // const refresh_token = null;
     const access_token = null;
     const local_storage = false;
     this.state = {

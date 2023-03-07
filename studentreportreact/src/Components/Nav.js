@@ -3,29 +3,29 @@ import PropTypes from 'prop-types';
 
 // function Nav(props) {
 class Nav extends Component{
-  constructor(props){
-    super(props);
-  }
+  // constructor(props){
+  //   super(props);
+  // }
   componentDidMount(){
   }
 
   render(){
     const logged_out_nav = (
       <ul className="navbar-nav mr-auto">
-        <li className="nav-item"><a className="nav-link" href={null} onClick={() => this.props.display_form('login')}>Login</a></li>
-        <li className="nav-item"><a className="nav-link" href={null} onClick={() => this.props.display_form('signup')}>Signup</a></li>
+        <li className="nav-item"><button className="btn btn-link nav-link" href={null} onClick={() => this.props.display_form('login')}>Login</button></li>
+        <li className="nav-item"><button className="btn btn-link nav-link" href={null} onClick={() => this.props.display_form('signup')}>Signup</button></li>
       </ul>
     );
 
     const logged_in_nav = (
       <ul className="navbar-nav mr-auto">
-      <li className="nav-item"><a className="nav-link" href={null} onClick={() => this.props.display_form('AdminInput')}>{this.props.username}</a></li>
-      <li  className="nav-item"><a className="nav-link" href={null} onClick={this.props.handle_logout}>Logout</a></li>
+      <li className="nav-item"><button className="btn btn-link nav-link" href={null} onClick={() => this.props.display_form('AdminInput')}>{this.props.username}</button></li>
+      <li  className="nav-item"><button className="btn btn-link nav-link" href={null} onClick={this.props.handle_logout}>Logout</button></li>
     </ul>
   );
   return <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
        
-        <a className="navbar-brand" onClick={this.props.display_home}>Student Report</a>
+        <button className="btn btn-link navbar-brand" onClick={this.props.display_home}>Student Report</button>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
         </button>

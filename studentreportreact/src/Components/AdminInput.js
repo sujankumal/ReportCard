@@ -355,26 +355,26 @@ export default class AdminInput extends Component{
                 </tbody>
             </table>
         </div>
-        let student_search = <div className = "container">
-            <div className="btn-group mx-auto my-auto">
-                <div className="form-inline input-group input-group-sm dropdown mx-2">
-                        <input type="text" className="form-control dropdown-toggle  my-auto" 
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Search and Add"
-                        onKeyUp={(e)=>this.filterStudents(e)} ref={this.filterstudentsinputid} />
-                        <span className="input-group-text" disabled><FontAwesomeIcon icon={faSearch} /></span>
-                        <div  className="dropdown-menu overflow-auto studentsearcheditsubjectstudent" style={{height: 200 + 'px'}} >
-                            <table className="table table-bordered table-striped table-hover table-sm">
-                                <thead><tr><td>Students Name</td></tr></thead>
-                                <tbody ref = {this.filterstudentslist}>{
-                                this.state.students.map((items, key) => 
-                                <tr key={key} value={items.id}><td onClick={ (e)=>this.addStudentToSubject(e, )} value={items.id}>{items.student_name}</td></tr>
-                                )
-                                }</tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-        </div>
+        // let student_search = <div className = "container">
+        //     <div className="btn-group mx-auto my-auto">
+        //         <div className="form-inline input-group input-group-sm dropdown mx-2">
+        //                 <input type="text" className="form-control dropdown-toggle  my-auto" 
+        //                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder="Search and Add"
+        //                 onKeyUp={(e)=>this.filterStudents(e)} ref={this.filterstudentsinputid} />
+        //                 <span className="input-group-text" disabled><FontAwesomeIcon icon={faSearch} /></span>
+        //                 <div  className="dropdown-menu overflow-auto studentsearcheditsubjectstudent" style={{height: 200 + 'px'}} >
+        //                     <table className="table table-bordered table-striped table-hover table-sm">
+        //                         <thead><tr><td>Students Name</td></tr></thead>
+        //                         <tbody ref = {this.filterstudentslist}>{
+        //                         this.state.students.map((items, key) => 
+        //                         <tr key={key} value={items.id}><td onClick={ (e)=>this.addStudentToSubject(e, )} value={items.id}>{items.student_name}</td></tr>
+        //                         )
+        //                         }</tbody>
+        //                     </table>
+        //                 </div>
+        //             </div>
+        //         </div>
+        // </div>
         let subjectsedit = <div className="container">
             <table className="table-responsive table table-bordered table-hover table-sm text-left">
                 <tbody>
